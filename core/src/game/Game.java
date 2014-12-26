@@ -8,6 +8,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -20,11 +21,11 @@ public class Game extends ApplicationAdapter {
 	public static float GRAVITY;
 	public static Vector2 screenDimension;
 
-	ShapeRenderer shapeRenderer;
-	SpriteBatch spriteBatch;
-	FontManager fontManager;
+	public static ShapeRenderer shapeRenderer;
+	public static SpriteBatch spriteBatch;
+	public static PolygonSpriteBatch polygonSpriteBatch;
 
-	// Texture img;
+	FontManager fontManager;
 
 	@Override
 	public void create() {
@@ -37,8 +38,9 @@ public class Game extends ApplicationAdapter {
 
 		shapeRenderer = new ShapeRenderer();
 		spriteBatch = new SpriteBatch();
+		polygonSpriteBatch = new PolygonSpriteBatch();
+
 		fontManager = new FontManager();
-		// img = new Texture("badlogic.jpg");
 
 		StateManager.changeState(new MainMenuState());
 	}
@@ -54,11 +56,7 @@ public class Game extends ApplicationAdapter {
 	public void render() {
 		StateManager.updateState();
 
-		// sb.begin();
-		// sb.draw(img, 0, 0);
-		// sb.end();
-
-		StateManager.renderState(shapeRenderer, spriteBatch);
+		StateManager.renderState();
 	}
 
 	@Override

@@ -7,8 +7,6 @@ import utilities.Touch;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class GameOverState extends State implements InputProcessor {
 
@@ -36,13 +34,13 @@ public class GameOverState extends State implements InputProcessor {
 	}
 
 	@Override
-	public void render(ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
+	public void render() {
 		Game.clearScreen(255, 255, 255, 1);
 
-		renderTitle(spriteBatch);
+		renderTitle();
 	}
 
-	private void renderTitle(SpriteBatch spriteBatch) {
+	private void renderTitle() {
 		int fontSize = (int) (0.1 * Game.screenDimension.x);
 		BitmapFont font = FontManager.getFont(fontSize);
 
@@ -51,10 +49,10 @@ public class GameOverState extends State implements InputProcessor {
 		float y = GAME_OVER_POS * Game.screenDimension.y
 				+ font.getBounds(GAME_OVER).height / 2;
 
-		spriteBatch.begin();
+		Game.spriteBatch.begin();
 		font.setColor(0, 0, 0, 1);
-		font.draw(spriteBatch, GAME_OVER, x, y);
-		spriteBatch.end();
+		font.draw(Game.spriteBatch, GAME_OVER, x, y);
+		Game.spriteBatch.end();
 	}
 
 	@Override

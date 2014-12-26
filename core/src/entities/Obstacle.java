@@ -1,49 +1,80 @@
 package entities;
 
 import game.Game;
+import states.GamePlayState;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.PolygonRegion;
+import com.badlogic.gdx.graphics.g2d.PolygonSprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
-public class Obstacle extends Rectangle {
+public class Obstacle extends Polygon {
 
-	private static final long serialVersionUID = 1L;
+	private final static float maxRotationSpeed = 5;
 
-	public Vector2 halfDimension, velocity;
+	private PolygonSprite polygonSprite;
+	private TextureRegion textureRegion;
+	private short[] triangles;
+
+	public Vector2 displacement, velocity;
 	public float rotation, rotationSpeed;
 	public Color color;
 
-	public Obstacle(float x, float y, float width, float height, Color color) {
-		super(x, y, width, height);
+	public Obstacle() {
+		float x = MathUtils.random(Game.screenDimension.x);
+		float y = Game.screenDimension.y;
 
-		halfDimension = new Vector2(width / 2, height / 2);
-		velocity = new Vector2();
+		float width = MathUtils.random(0.01f * Game.screenDimension.x,
+				0.2f * Game.screenDimension.x);
+		float height = MathUtils.random(0.01f * Game.screenDimension.x,
+				0.2f * Game.screenDimension.x);
 
-		this.rotation = 0;
-		rotationSpeed = MathUtils.random(-10, 10);
+		float[] vertices = new float[] { x, y, x + width, y, x + width,
+				y + height, x, y + height };
+		setVertices(vertices);
+		setOrigin(x + width / 2, y + height / 2);
 
-		this.color = color;
+		rotation = 0;
+		rotationSpeed = MathUtils.random(-maxRotationSpeed, maxRotationSpeed);
+
+		displacement = new Vector2();
+		velocity = new Vector2(0, -0.5f * Math.abs(rotationSpeed));
+
+		Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+		pix.setColor(GamePlayState.obstacleColors.get(MathUtils
+				.random(GamePlayState.obstacleColors.size - 1)));
+		pix.fill();
+
+		Texture textureSolid = new Texture(pix);
+		textureRegion = new TextureRegion(textureSolid);
+		triangles = new short[] { 0, 1, 2, 0, 2, 3 };
 	}
 
 	public void update() {
 		velocity.y -= 0.1 * Game.GRAVITY;
-		y += velocity.y;
+		displacement.y += velocity.y;
 
 		rotation = (rotation + rotationSpeed) % 360;
+
+		setPosition(0, displacement.y);
+		setRotation(rotation);
+
+		PolygonRegion polyReg = new PolygonRegion(textureRegion,
+				getTransformedVertices(), triangles);
+		polygonSprite = new PolygonSprite(polyReg);
+		polygonSprite.setRegion(polyReg);
 	}
 
 	public void draw(ShapeRenderer shapeRenderer) {
-		shapeRenderer.begin(ShapeType.Filled);
-
-		shapeRenderer.setColor(color);
-		shapeRenderer.rect(x, y, halfDimension.x, halfDimension.y, width,
-				height, 1, 1, rotation);
-
-		shapeRenderer.end();
+		Game.polygonSpriteBatch.begin();
+		polygonSprite.draw(Game.polygonSpriteBatch);
+		Game.polygonSpriteBatch.end();
 	}
 
 }

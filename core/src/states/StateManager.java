@@ -1,8 +1,5 @@
 package states;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-
 public class StateManager {
 
 	private static State currentState;
@@ -25,9 +22,9 @@ public class StateManager {
 			currentState.update();
 	}
 
-	public static void renderState(ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
+	public static void renderState() {
 		if (currentState != null)
-			currentState.render(shapeRenderer, spriteBatch);
+			currentState.render();
 	}
 
 	public static void disposeState() {

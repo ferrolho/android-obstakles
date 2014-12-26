@@ -6,12 +6,14 @@ import game.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class Player {
+public class Player extends Rectangle {
+	
+	private static final long serialVersionUID = 1L;
 
-	public Vector2 position, velocity;
-	public int size;
+	public Vector2 velocity;
 	public float acceleration, breakSpeed, topSpeed;
 
 	public Color color;
@@ -19,11 +21,15 @@ public class Player {
 	public Player(Color color) {
 		this.color = color;
 
-		size = (int) (0.06 * Game.screenDimension.x);
+		float size = (int) (0.06 * Game.screenDimension.x);
 
-		position = new Vector2(Game.screenDimension.x / 2 - size / 2, 0);
+		x = Game.screenDimension.x / 2 - size / 2;
+		y = 0;
+
+		width = size;
+		height = size;
+
 		velocity = new Vector2();
-
 		acceleration = 0.001f * Game.screenDimension.x;
 		breakSpeed = 1.2f * acceleration;
 		topSpeed = 0.02f * Game.screenDimension.x;
@@ -62,46 +68,58 @@ public class Player {
 		}
 
 		// update x
-		position.x += velocity.x;
+		x += velocity.x;
 		// update y
 		velocity.y -= Game.GRAVITY;
-		position.y += velocity.y;
+		y += velocity.y;
 
 		updateCollisions();
-	}
-
-	private void updateCollisions() {
-		// ground collision
-		if (position.y < 0) {
-			velocity.y = 0;
-			position.y = 0;
-		}
-
-		// side borders collision
-		if (position.x < 0) {
-			velocity.x = 2 * topSpeed;
-			velocity.y = 10 * Game.GRAVITY;
-
-			position.x += velocity.x;
-			position.y += velocity.y;
-
-			GamePlayState.bumpSound.play();
-		} else if (position.x + size > Game.screenDimension.x) {
-			velocity.x = -2 * topSpeed;
-			velocity.y = 10 * Game.GRAVITY;
-
-			position.x += velocity.x;
-			position.y += velocity.y;
-
-			GamePlayState.bumpSound.play();
-		}
 	}
 
 	public void draw(ShapeRenderer shapeRenderer) {
 		shapeRenderer.begin(ShapeType.Filled);
 		shapeRenderer.setColor(color);
-		shapeRenderer.rect(position.x, position.y, size, size);
+		shapeRenderer.rect(x, y, width, height);
 		shapeRenderer.end();
+	}
+
+	private void updateCollisions() {
+		// ground collision
+		if (y < 0) {
+			velocity.y = 0;
+			y = 0;
+		}
+
+		// side borders collision
+		if (x < 0) {
+			velocity.x = 2 * topSpeed;
+			velocity.y = 10 * Game.GRAVITY;
+
+			x += velocity.x;
+			y += velocity.y;
+
+			GamePlayState.bumpSound.play();
+		} else if (x + width > Game.screenDimension.x) {
+			velocity.x = -2 * topSpeed;
+			velocity.y = 10 * Game.GRAVITY;
+
+			x += velocity.x;
+			y += velocity.y;
+
+			GamePlayState.bumpSound.play();
+		}
+	}
+
+	public boolean overlaps(Obstacle obstacle) {
+		for (int i = 0; i < obstacle.getTransformedVertices().length / 2; i += 2) {
+			if (contains(obstacle.getTransformedVertices()[i],
+					obstacle.getTransformedVertices()[i + 1]))
+				return true;
+		}
+
+		return obstacle.contains(x, y) || obstacle.contains(x + width, y)
+				|| obstacle.contains(x + width, y + height)
+				|| obstacle.contains(x, y + height);
 	}
 
 }

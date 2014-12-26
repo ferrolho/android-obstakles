@@ -5,11 +5,9 @@ import utilities.FontManager;
 import utilities.Touch;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class MainMenuState extends State implements InputProcessor {
 
@@ -33,14 +31,14 @@ public class MainMenuState extends State implements InputProcessor {
 	}
 
 	@Override
-	public void render(ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
+	public void render() {
 		Game.clearScreen(255, 255, 255, 1);
 
-		renderTitle(spriteBatch);
-		renderCopyright(spriteBatch);
+		renderTitle();
+		renderCopyright();
 	}
 
-	private void renderTitle(SpriteBatch spriteBatch) {
+	private void renderTitle() {
 		int fontSize = (int) (0.1 * Game.screenDimension.x);
 		BitmapFont font = FontManager.getFont(fontSize);
 
@@ -49,13 +47,13 @@ public class MainMenuState extends State implements InputProcessor {
 		float y = TITLE_POS * Game.screenDimension.y
 				+ font.getBounds(Game.TITLE).height / 2;
 
-		spriteBatch.begin();
+		Game.spriteBatch.begin();
 		font.setColor(0, 0, 0, 1);
-		font.draw(spriteBatch, Game.TITLE, x, y);
-		spriteBatch.end();
+		font.draw(Game.spriteBatch, Game.TITLE, x, y);
+		Game.spriteBatch.end();
 	}
 
-	private void renderCopyright(SpriteBatch spriteBatch) {
+	private void renderCopyright() {
 		int fontSize = (int) (0.02 * Game.screenDimension.x);
 		BitmapFont font = FontManager.getFont(fontSize);
 
@@ -64,10 +62,10 @@ public class MainMenuState extends State implements InputProcessor {
 		float y = CREDITS_POS * Game.screenDimension.y
 				+ font.getBounds(Game.CREDITS).height / 2;
 
-		spriteBatch.begin();
+		Game.spriteBatch.begin();
 		font.setColor(0, 0, 0, 1);
-		font.draw(spriteBatch, Game.CREDITS, x, y);
-		spriteBatch.end();
+		font.draw(Game.spriteBatch, Game.CREDITS, x, y);
+		Game.spriteBatch.end();
 	}
 
 	@Override

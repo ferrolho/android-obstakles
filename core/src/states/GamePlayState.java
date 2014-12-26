@@ -12,10 +12,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
 import entities.Obstacle;
@@ -27,10 +24,9 @@ public class GamePlayState extends State implements InputProcessor {
 	public static Sound bumpSound, thumpSound;
 
 	private float obstacleSpawnProb;
-	private Array<Color> obstacleColors;
+	public static Array<Color> obstacleColors;
 
 	private Player player;
-	// private Rectangle teste2, teste3;
 	private Array<Obstacle> obstacles;
 
 	@Override
@@ -47,15 +43,11 @@ public class GamePlayState extends State implements InputProcessor {
 		obstacleColors.add(Color.MAGENTA);
 		obstacleColors.add(Color.NAVY);
 		obstacleColors.add(Color.ORANGE);
-		obstacleColors.add(Color.PINK);
 		obstacleColors.add(Color.PURPLE);
 		obstacleColors.add(Color.RED);
-		obstacleColors.add(Color.TEAL);
 		obstacleColors.add(Color.YELLOW);
 
 		player = new Player(Color.BLACK);
-		// teste2 = new Rectangle(200, 200, 200, 200, Color.BLACK);
-		// teste3 = new Rectangle(500, 500, 200, 200, Color.GREEN);
 		obstacles = new Array<Obstacle>();
 
 		Gdx.input.setInputProcessor(this);
@@ -81,9 +73,6 @@ public class GamePlayState extends State implements InputProcessor {
 			Touch touch = pairs.getValue();
 
 			if (touch.touched) {
-				// teste2.position.x = touch.touchX;
-				// teste2.position.y = Game.screenDimension.y - touch.touchY;
-
 				if (touch.position.x < Game.screenDimension.x / 2) {
 					movingLeft = true;
 					Gdx.app.debug("Touch", "move left");
@@ -96,14 +85,8 @@ public class GamePlayState extends State implements InputProcessor {
 
 		player.update(movingLeft, movingRight);
 
-		// teste2.update();
-		// teste3.update();
-
 		if (MathUtils.random(100) <= obstacleSpawnProb)
-			spawnObstacle();
-
-		Rectangle playerRectangle = new Rectangle(player.position.x,
-				player.position.y, player.size, player.size);
+			obstacles.add(new Obstacle());
 
 		Iterator<Obstacle> iterator = obstacles.iterator();
 		while (iterator.hasNext()) {
@@ -112,44 +95,30 @@ public class GamePlayState extends State implements InputProcessor {
 			obstacle.update();
 
 			// check player collision
-			if (playerRectangle.overlaps(obstacle)) {
+			if (player.overlaps(obstacle)) {
 				thumpSound.play();
 				StateManager.changeState(new GameOverState());
 			}
 
-			if (obstacle.y + obstacle.height < -0.25 * Game.screenDimension.y)
+			if (Math.abs(obstacle.displacement.y) > 1.25 * Game.screenDimension.y)
 				iterator.remove();
 		}
 	}
 
 	@Override
-	public void render(ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
+	public void render() {
 		Game.clearScreen(255, 255, 255, 1);
 
-		player.draw(shapeRenderer);
-		// teste2.draw(shapeRenderer);
-		// teste3.draw(shapeRenderer);
+		player.draw(Game.shapeRenderer);
 
 		for (Obstacle obstacle : obstacles)
-			obstacle.draw(shapeRenderer);
+			obstacle.draw(Game.shapeRenderer);
 	}
 
 	@Override
 	public void dispose() {
 		bumpSound.dispose();
 		thumpSound.dispose();
-	}
-
-	private void spawnObstacle() {
-		float x = MathUtils.random(Game.screenDimension.x);
-		float w = MathUtils.random(0.01f * Game.screenDimension.x,
-				0.2f * Game.screenDimension.x);
-		float h = MathUtils.random(0.01f * Game.screenDimension.x,
-				0.2f * Game.screenDimension.x);
-		Color color = obstacleColors.get(MathUtils
-				.random(obstacleColors.size - 1));
-
-		obstacles.add(new Obstacle(x, Game.screenDimension.y, w, h, color));
 	}
 
 	private Map<Integer, Touch> touches = new HashMap<Integer, Touch>();
