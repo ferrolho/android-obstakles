@@ -30,8 +30,6 @@ public class GamePlayState extends State implements InputProcessor {
 	private int scoreFontSize;
 	private float elapsedTime;
 
-	private Player player;
-
 	@Override
 	public void create() {
 		// load the shock sound effect
@@ -43,7 +41,7 @@ public class GamePlayState extends State implements InputProcessor {
 		scoreFontSize = (int) (0.05 * Game.screenDimension.x);
 		elapsedTime = 0;
 
-		player = new Player(Color.BLUE);
+		Game.player = new Player(Color.BLUE);
 		Game.clearObstacles();
 
 		Gdx.input.setInputProcessor(this);
@@ -79,7 +77,7 @@ public class GamePlayState extends State implements InputProcessor {
 			}
 		}
 
-		player.update(movingLeft, movingRight);
+		Game.player.update(movingLeft, movingRight);
 
 		Game.updateObstacles();
 
@@ -88,7 +86,7 @@ public class GamePlayState extends State implements InputProcessor {
 
 		// check player collision
 		for (Obstacle obstacle : Game.obstacles) {
-			if (player.overlaps(obstacle)) {
+			if (Game.player.overlaps(obstacle)) {
 				thumpSound.play();
 				GameOverState.lastScore = elapsedTime;
 				StateManager.changeState(new GameOverState());
@@ -100,7 +98,7 @@ public class GamePlayState extends State implements InputProcessor {
 	public void render() {
 		Game.clearScreen(255, 255, 255, 1);
 
-		player.draw();
+		Game.player.draw();
 
 		Game.drawObstacles();
 

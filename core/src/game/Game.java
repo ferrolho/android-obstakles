@@ -19,6 +19,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import entities.Obstacle;
+import entities.Player;
 
 public class Game extends ApplicationAdapter {
 
@@ -37,6 +38,8 @@ public class Game extends ApplicationAdapter {
 
 	public static Array<Color> obstacleColors;
 	public static Array<Obstacle> obstacles;
+
+	public static Player player;
 
 	@Override
 	public void create() {
