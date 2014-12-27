@@ -6,7 +6,6 @@ Another android game.
 Click [here](/android/apk/obstakles-android.apk?raw=true) to download the apk.
 
 #To do
-- Improve menu and game over screen;
 - Different obstacle shapes;
 - Special item to clear all falling obstacles.
 
