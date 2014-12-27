@@ -11,19 +11,29 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 public class MainMenuState extends State implements InputProcessor {
 
-	private final static long TITLE_SIZE = Math
+	private final static int TITLE_SIZE = (int) Math
 			.round(0.15 * Game.screenDimension.x);
-	private final static long CREDITS_SIZE = Math
+	private final static int INFO_SIZE = (int) Math
+			.round(0.05 * Game.screenDimension.x);
+	private final static int CREDITS_SIZE = (int) Math
 			.round(0.03 * Game.screenDimension.x);
 
 	private final static float TITLE_POS = 0.8f;
+	private final static float INFO_POS = 0.45f;
 	private final static float CREDITS_POS = 0.1f;
+
+	private float infoDisplacement, maxInfoDisplacement, infoSpeed;
 
 	private Touch touch;
 
 	@Override
 	public void create() {
 		Gdx.input.setInputProcessor(this);
+
+		infoDisplacement = 0;
+		maxInfoDisplacement = 0.02f * Game.screenDimension.y;
+		infoSpeed = 0.0005f * Game.screenDimension.y;
+
 		touch = new Touch();
 	}
 
@@ -33,6 +43,9 @@ public class MainMenuState extends State implements InputProcessor {
 
 	@Override
 	public void update() {
+		infoDisplacement += infoSpeed;
+		if (Math.abs(infoDisplacement) > maxInfoDisplacement)
+			infoSpeed = -infoSpeed;
 	}
 
 	@Override
@@ -40,11 +53,12 @@ public class MainMenuState extends State implements InputProcessor {
 		Game.clearScreen(255, 255, 255, 1);
 
 		renderTitle();
+		renderInfo();
 		renderCopyright();
 	}
 
 	private void renderTitle() {
-		BitmapFont font = FontManager.getFont((int) TITLE_SIZE);
+		BitmapFont font = FontManager.getFont(TITLE_SIZE);
 
 		float x = Game.screenDimension.x / 2 - font.getBounds(Game.TITLE).width
 				/ 2;
@@ -57,8 +71,22 @@ public class MainMenuState extends State implements InputProcessor {
 		Game.spriteBatch.end();
 	}
 
+	private void renderInfo() {
+		BitmapFont font = FontManager.getFont(INFO_SIZE);
+
+		float x = Game.screenDimension.x / 2 - font.getBounds(Game.INFO).width
+				/ 2;
+		float y = INFO_POS * Game.screenDimension.y
+				+ font.getBounds(Game.INFO).height / 2 + infoDisplacement;
+
+		Game.spriteBatch.begin();
+		font.setColor(0, 0, 0, 1);
+		font.draw(Game.spriteBatch, Game.INFO, x, y);
+		Game.spriteBatch.end();
+	}
+
 	private void renderCopyright() {
-		BitmapFont font = FontManager.getFont((int) CREDITS_SIZE);
+		BitmapFont font = FontManager.getFont(CREDITS_SIZE);
 
 		float x = Game.screenDimension.x / 2
 				- font.getBounds(Game.CREDITS).width / 2;

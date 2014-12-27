@@ -105,6 +105,7 @@ public class GamePlayState extends State implements InputProcessor {
 			// check player collision
 			if (player.overlaps(obstacle)) {
 				thumpSound.play();
+				GameOverState.lastScore = elapsedTime;
 				StateManager.changeState(new GameOverState());
 			}
 

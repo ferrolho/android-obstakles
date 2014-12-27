@@ -1,5 +1,6 @@
 package game;
 
+import states.GameOverState;
 import states.MainMenuState;
 import states.StateManager;
 import utilities.FontManager;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.math.Vector2;
 public class Game extends ApplicationAdapter {
 
 	public final static String TITLE = "Obstakles";
+	public final static String INFO = "Tap anywhere to begin";
 	public final static String CREDITS = "© 2014 Henrique Ferrolho";
 
 	public static float GRAVITY;
@@ -42,6 +44,8 @@ public class Game extends ApplicationAdapter {
 
 		fontManager = new FontManager();
 
+		loadBestScore();
+
 		StateManager.changeState(new MainMenuState());
 	}
 
@@ -64,6 +68,10 @@ public class Game extends ApplicationAdapter {
 		spriteBatch.dispose();
 		fontManager.dispose();
 		StateManager.disposeState();
+	}
+
+	private void loadBestScore() {
+		GameOverState.bestScore = 0;
 	}
 
 	public static final void clearScreen(float red, float green, float blue,
