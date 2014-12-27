@@ -16,7 +16,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
 
 import entities.Obstacle;
 import entities.Player;
@@ -27,13 +26,11 @@ public class GamePlayState extends State implements InputProcessor {
 	public static Sound bumpSound, thumpSound;
 
 	private float obstacleSpawnProb;
-	public static Array<Color> obstacleColors;
 
 	private int scoreFontSize;
 	private float elapsedTime;
 
 	private Player player;
-	private Array<Obstacle> obstacles;
 
 	@Override
 	public void create() {
@@ -42,20 +39,12 @@ public class GamePlayState extends State implements InputProcessor {
 		thumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/thump.wav"));
 
 		obstacleSpawnProb = 1;
-		obstacleColors = new Array<Color>();
-		obstacleColors.add(Color.BLUE);
-		obstacleColors.add(Color.CYAN);
-		obstacleColors.add(Color.GREEN);
-		obstacleColors.add(Color.MAGENTA);
-		obstacleColors.add(Color.ORANGE);
-		obstacleColors.add(Color.RED);
-		obstacleColors.add(Color.YELLOW);
 
 		scoreFontSize = (int) (0.05 * Game.screenDimension.x);
 		elapsedTime = 0;
 
-		player = new Player(Color.BLACK);
-		obstacles = new Array<Obstacle>();
+		player = new Player(Color.BLUE);
+		Game.clearObstacles();
 
 		Gdx.input.setInputProcessor(this);
 		for (int i = 0; i < 5; i++) {
@@ -65,7 +54,6 @@ public class GamePlayState extends State implements InputProcessor {
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -93,24 +81,18 @@ public class GamePlayState extends State implements InputProcessor {
 
 		player.update(movingLeft, movingRight);
 
+		Game.updateObstacles();
+
 		if (MathUtils.random(100) <= obstacleSpawnProb)
-			obstacles.add(new Obstacle());
+			Game.spawnObstacle();
 
-		Iterator<Obstacle> iterator = obstacles.iterator();
-		while (iterator.hasNext()) {
-			Obstacle obstacle = iterator.next();
-
-			obstacle.update();
-
-			// check player collision
+		// check player collision
+		for (Obstacle obstacle : Game.obstacles) {
 			if (player.overlaps(obstacle)) {
 				thumpSound.play();
 				GameOverState.lastScore = elapsedTime;
 				StateManager.changeState(new GameOverState());
 			}
-
-			if (Math.abs(obstacle.displacement.y) > 1.25 * Game.screenDimension.y)
-				iterator.remove();
 		}
 	}
 
@@ -120,8 +102,7 @@ public class GamePlayState extends State implements InputProcessor {
 
 		player.draw();
 
-		for (Obstacle obstacle : obstacles)
-			obstacle.draw();
+		Game.drawObstacles();
 
 		renderScore();
 	}
@@ -161,13 +142,11 @@ public class GamePlayState extends State implements InputProcessor {
 
 	@Override
 	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -195,19 +174,16 @@ public class GamePlayState extends State implements InputProcessor {
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

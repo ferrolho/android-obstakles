@@ -7,7 +7,11 @@ import utilities.Touch;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 
 public class MainMenuState extends State implements InputProcessor {
 
@@ -22,19 +26,35 @@ public class MainMenuState extends State implements InputProcessor {
 	private final static float INFO_POS = 0.45f;
 	private final static float CREDITS_POS = 0.1f;
 
+	private float obstacleSpawnProb;
+
 	private float infoDisplacement, maxInfoDisplacement, infoSpeed;
 
 	private Touch touch;
 
+	private boolean goToPlayState;
+	private Vector2 animationPos;
+	private float animationRadius, maxRadius;
+
 	@Override
 	public void create() {
 		Gdx.input.setInputProcessor(this);
+
+		Game.clearObstacles();
+		obstacleSpawnProb = 30;
 
 		infoDisplacement = 0;
 		maxInfoDisplacement = 0.02f * Game.screenDimension.y;
 		infoSpeed = 0.0005f * Game.screenDimension.y;
 
 		touch = new Touch();
+
+		goToPlayState = false;
+		animationPos = new Vector2();
+		animationRadius = 0;
+		maxRadius = (float) Math.sqrt(Game.screenDimension.x
+				* Game.screenDimension.x + Game.screenDimension.y
+				* Game.screenDimension.y);
 	}
 
 	@Override
@@ -43,18 +63,39 @@ public class MainMenuState extends State implements InputProcessor {
 
 	@Override
 	public void update() {
+		Game.updateObstacles();
+
+		if (MathUtils.random(100) <= obstacleSpawnProb)
+			Game.spawnObstacle();
+
 		infoDisplacement += infoSpeed;
 		if (Math.abs(infoDisplacement) > maxInfoDisplacement)
 			infoSpeed = -infoSpeed;
+
+		if (goToPlayState) {
+			animationRadius += 0.01 * Game.screenDimension.x + 0.15
+					* animationRadius;
+
+			if (animationRadius > maxRadius)
+				StateManager.changeState(new GamePlayState());
+		}
 	}
 
 	@Override
 	public void render() {
 		Game.clearScreen(255, 255, 255, 1);
 
+		Game.drawObstacles();
+
 		renderTitle();
 		renderInfo();
 		renderCopyright();
+
+		Game.shapeRenderer.begin(ShapeType.Filled);
+		Game.shapeRenderer.setColor(Color.WHITE);
+		Game.shapeRenderer.circle(animationPos.x, animationPos.y,
+				animationRadius);
+		Game.shapeRenderer.end();
 	}
 
 	private void renderTitle() {
@@ -113,13 +154,11 @@ public class MainMenuState extends State implements InputProcessor {
 
 	@Override
 	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -129,14 +168,18 @@ public class MainMenuState extends State implements InputProcessor {
 		touch.position.y = screenY;
 		touch.touched = true;
 
-		// TODO change this
-		StateManager.changeState(new GamePlayState());
-
 		return true;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		if (!goToPlayState) {
+			animationPos.x = screenX;
+			animationPos.y = Game.screenDimension.y - screenY;
+
+			goToPlayState = true;
+		}
+
 		touch.position.x = 0;
 		touch.position.y = 0;
 		touch.touched = false;
@@ -146,19 +189,16 @@ public class MainMenuState extends State implements InputProcessor {
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

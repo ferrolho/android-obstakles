@@ -1,5 +1,7 @@
 package game;
 
+import java.util.Iterator;
+
 import states.GameOverState;
 import states.MainMenuState;
 import states.StateManager;
@@ -8,11 +10,15 @@ import utilities.FontManager;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+
+import entities.Obstacle;
 
 public class Game extends ApplicationAdapter {
 
@@ -29,6 +35,9 @@ public class Game extends ApplicationAdapter {
 
 	FontManager fontManager;
 
+	public static Array<Color> obstacleColors;
+	public static Array<Obstacle> obstacles;
+
 	@Override
 	public void create() {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
@@ -43,6 +52,16 @@ public class Game extends ApplicationAdapter {
 		polygonSpriteBatch = new PolygonSpriteBatch();
 
 		fontManager = new FontManager();
+
+		obstacleColors = new Array<Color>();
+		obstacleColors.add(Color.CYAN);
+		obstacleColors.add(Color.GREEN);
+		obstacleColors.add(Color.MAGENTA);
+		obstacleColors.add(Color.ORANGE);
+		obstacleColors.add(Color.RED);
+		obstacleColors.add(Color.YELLOW);
+
+		obstacles = new Array<Obstacle>();
 
 		loadBestScore();
 
@@ -76,13 +95,39 @@ public class Game extends ApplicationAdapter {
 
 	public static final void clearScreen(float red, float green, float blue,
 			float alpha) {
-		Gdx.gl.glClearColor(red, green, blue, alpha);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClearColor(red / 255.0f, green / 255.0f, blue / 255.0f, alpha);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 	}
 
 	private void updateScreenDimension() {
 		screenDimension.x = Gdx.graphics.getWidth();
 		screenDimension.y = Gdx.graphics.getHeight();
+	}
+
+	public static void clearObstacles() {
+		obstacles.clear();
+	}
+
+	public static void spawnObstacle() {
+		obstacles.add(new Obstacle());
+	}
+
+	public static void updateObstacles() {
+		Iterator<Obstacle> iterator = obstacles.iterator();
+
+		while (iterator.hasNext()) {
+			Obstacle obstacle = iterator.next();
+
+			obstacle.update();
+
+			if (Math.abs(obstacle.displacement.y) > 1.25 * screenDimension.y)
+				iterator.remove();
+		}
+	}
+
+	public static void drawObstacles() {
+		for (Obstacle obstacle : obstacles)
+			obstacle.draw();
 	}
 
 }

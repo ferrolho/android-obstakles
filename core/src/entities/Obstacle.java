@@ -1,7 +1,6 @@
 package entities;
 
 import game.Game;
-import states.GamePlayState;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -47,13 +46,18 @@ public class Obstacle extends Polygon {
 		velocity = new Vector2(0, -0.5f * Math.abs(rotationSpeed));
 
 		Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-		pix.setColor(GamePlayState.obstacleColors.get(MathUtils
-				.random(GamePlayState.obstacleColors.size - 1)));
+		pix.setColor(Game.obstacleColors.get(MathUtils
+				.random(Game.obstacleColors.size - 1)));
 		pix.fill();
 
 		Texture textureSolid = new Texture(pix);
 		textureRegion = new TextureRegion(textureSolid);
 		triangles = new short[] { 0, 1, 2, 0, 2, 3 };
+
+		PolygonRegion polyReg = new PolygonRegion(textureRegion,
+				getTransformedVertices(), triangles);
+		polygonSprite = new PolygonSprite(polyReg);
+		polygonSprite.setRegion(polyReg);
 	}
 
 	public void update() {

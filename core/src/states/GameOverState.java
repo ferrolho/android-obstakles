@@ -53,14 +53,10 @@ public class GameOverState extends State implements InputProcessor {
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -115,8 +111,6 @@ public class GameOverState extends State implements InputProcessor {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -135,7 +129,6 @@ public class GameOverState extends State implements InputProcessor {
 
 	@Override
 	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -144,9 +137,6 @@ public class GameOverState extends State implements InputProcessor {
 		touch.position.x = screenX;
 		touch.position.y = screenY;
 		touch.touched = true;
-
-		// TODO change this
-		StateManager.changeState(new MainMenuState());
 
 		return true;
 	}
@@ -157,24 +147,24 @@ public class GameOverState extends State implements InputProcessor {
 		touch.position.y = 0;
 		touch.touched = false;
 
+		// TODO change this
+		StateManager.changeState(new MainMenuState());
+
 		return true;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
