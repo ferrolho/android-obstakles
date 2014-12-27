@@ -1,8 +1,8 @@
 Obstakles
 =========
-
 Another android game.
 
+#Download
 Click [here](/android/apk/obstakles-android.apk?raw=true) to download the apk.
 
 #Screenshots
