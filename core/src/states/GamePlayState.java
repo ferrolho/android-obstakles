@@ -71,7 +71,7 @@ public class GamePlayState extends State implements InputProcessor {
 	@Override
 	public void update() {
 		elapsedTime += Gdx.graphics.getDeltaTime();
-		obstacleSpawnProb += 0.02;
+		obstacleSpawnProb += 0.008;
 
 		boolean movingLeft = false, movingRight = false;
 

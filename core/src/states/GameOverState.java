@@ -104,7 +104,10 @@ public class GameOverState extends State implements InputProcessor {
 				* font.getBounds(lastScoreStr).height;
 
 		Game.spriteBatch.begin();
-		font.setColor(0, 0, 0, 1);
+		if (lastScore == bestScore)
+			font.setColor(0, 1, 0, 1);
+		else
+			font.setColor(0, 0, 0, 1);
 		font.draw(Game.spriteBatch, lastScoreStr, lastX, lastY);
 		font.draw(Game.spriteBatch, bestScoreStr, bestX, bestY);
 		Game.spriteBatch.end();
@@ -142,6 +145,9 @@ public class GameOverState extends State implements InputProcessor {
 		touch.position.y = screenY;
 		touch.touched = true;
 
+		// TODO change this
+		StateManager.changeState(new MainMenuState());
+
 		return true;
 	}
 
@@ -150,9 +156,6 @@ public class GameOverState extends State implements InputProcessor {
 		touch.position.x = 0;
 		touch.position.y = 0;
 		touch.touched = false;
-
-		// TODO temp, change this
-		StateManager.changeState(new MainMenuState());
 
 		return true;
 	}

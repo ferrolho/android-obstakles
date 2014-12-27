@@ -129,6 +129,9 @@ public class MainMenuState extends State implements InputProcessor {
 		touch.position.y = screenY;
 		touch.touched = true;
 
+		// TODO change this
+		StateManager.changeState(new GamePlayState());
+
 		return true;
 	}
 
@@ -137,9 +140,6 @@ public class MainMenuState extends State implements InputProcessor {
 		touch.position.x = 0;
 		touch.position.y = 0;
 		touch.touched = false;
-
-		// TODO temp, change this
-		StateManager.changeState(new GamePlayState());
 
 		return true;
 	}
