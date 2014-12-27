@@ -1,10 +1,12 @@
 package states;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import utilities.FontManager;
 import utilities.Touch;
 
 import com.badlogic.gdx.Gdx;
@@ -12,6 +14,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
@@ -25,6 +28,9 @@ public class GamePlayState extends State implements InputProcessor {
 
 	private float obstacleSpawnProb;
 	public static Array<Color> obstacleColors;
+
+	private int scoreFontSize;
+	private float elapsedTime;
 
 	private Player player;
 	private Array<Obstacle> obstacles;
@@ -41,11 +47,12 @@ public class GamePlayState extends State implements InputProcessor {
 		obstacleColors.add(Color.CYAN);
 		obstacleColors.add(Color.GREEN);
 		obstacleColors.add(Color.MAGENTA);
-		obstacleColors.add(Color.NAVY);
 		obstacleColors.add(Color.ORANGE);
-		obstacleColors.add(Color.PURPLE);
 		obstacleColors.add(Color.RED);
 		obstacleColors.add(Color.YELLOW);
+
+		scoreFontSize = (int) (0.05 * Game.screenDimension.x);
+		elapsedTime = 0;
 
 		player = new Player(Color.BLACK);
 		obstacles = new Array<Obstacle>();
@@ -63,6 +70,7 @@ public class GamePlayState extends State implements InputProcessor {
 
 	@Override
 	public void update() {
+		elapsedTime += Gdx.graphics.getDeltaTime();
 		obstacleSpawnProb += 0.02;
 
 		boolean movingLeft = false, movingRight = false;
@@ -109,10 +117,29 @@ public class GamePlayState extends State implements InputProcessor {
 	public void render() {
 		Game.clearScreen(255, 255, 255, 1);
 
-		player.draw(Game.shapeRenderer);
+		player.draw();
 
 		for (Obstacle obstacle : obstacles)
-			obstacle.draw(Game.shapeRenderer);
+			obstacle.draw();
+
+		renderScore();
+	}
+
+	private void renderScore() {
+		BitmapFont font = FontManager.getFont(scoreFontSize);
+
+		DecimalFormat f = new DecimalFormat("##0.00");
+		String elapsedTimeStr = f.format(elapsedTime);
+
+		float x = Game.screenDimension.x - 1.1f
+				* font.getBounds(elapsedTimeStr).width;
+		float y = Game.screenDimension.y - 0.3f
+				* font.getBounds(elapsedTimeStr).height;
+
+		Game.spriteBatch.begin();
+		font.setColor(0, 0, 0, 1);
+		font.draw(Game.spriteBatch, elapsedTimeStr, x, y);
+		Game.spriteBatch.end();
 	}
 
 	@Override

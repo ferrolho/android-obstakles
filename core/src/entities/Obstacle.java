@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.PolygonSprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
@@ -71,10 +71,15 @@ public class Obstacle extends Polygon {
 		polygonSprite.setRegion(polyReg);
 	}
 
-	public void draw(ShapeRenderer shapeRenderer) {
+	public void draw() {
 		Game.polygonSpriteBatch.begin();
 		polygonSprite.draw(Game.polygonSpriteBatch);
 		Game.polygonSpriteBatch.end();
+
+		Game.shapeRenderer.begin(ShapeType.Line);
+		Game.shapeRenderer.setColor(Color.BLACK);
+		Game.shapeRenderer.polygon(getTransformedVertices());
+		Game.shapeRenderer.end();
 	}
 
 }

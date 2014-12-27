@@ -11,8 +11,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 public class MainMenuState extends State implements InputProcessor {
 
+	private final static long TITLE_SIZE = Math
+			.round(0.15 * Game.screenDimension.x);
+	private final static long CREDITS_SIZE = Math
+			.round(0.03 * Game.screenDimension.x);
+
 	private final static float TITLE_POS = 0.8f;
-	private final static float CREDITS_POS = 0.2f;
+	private final static float CREDITS_POS = 0.1f;
 
 	private Touch touch;
 
@@ -39,8 +44,7 @@ public class MainMenuState extends State implements InputProcessor {
 	}
 
 	private void renderTitle() {
-		int fontSize = (int) (0.1 * Game.screenDimension.x);
-		BitmapFont font = FontManager.getFont(fontSize);
+		BitmapFont font = FontManager.getFont((int) TITLE_SIZE);
 
 		float x = Game.screenDimension.x / 2 - font.getBounds(Game.TITLE).width
 				/ 2;
@@ -54,8 +58,7 @@ public class MainMenuState extends State implements InputProcessor {
 	}
 
 	private void renderCopyright() {
-		int fontSize = (int) (0.02 * Game.screenDimension.x);
-		BitmapFont font = FontManager.getFont(fontSize);
+		BitmapFont font = FontManager.getFont((int) CREDITS_SIZE);
 
 		float x = Game.screenDimension.x / 2
 				- font.getBounds(Game.CREDITS).width / 2;

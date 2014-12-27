@@ -1,16 +1,15 @@
 package entities;
 
-import states.GamePlayState;
 import game.Game;
+import states.GamePlayState;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Player extends Rectangle {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	public Vector2 velocity;
@@ -76,11 +75,11 @@ public class Player extends Rectangle {
 		updateCollisions();
 	}
 
-	public void draw(ShapeRenderer shapeRenderer) {
-		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.setColor(color);
-		shapeRenderer.rect(x, y, width, height);
-		shapeRenderer.end();
+	public void draw() {
+		Game.shapeRenderer.begin(ShapeType.Filled);
+		Game.shapeRenderer.setColor(color);
+		Game.shapeRenderer.rect(x, y, width, height);
+		Game.shapeRenderer.end();
 	}
 
 	private void updateCollisions() {
