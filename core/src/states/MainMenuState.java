@@ -146,8 +146,21 @@ public class MainMenuState extends State implements InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
-		if (keycode == Keys.BACK)
-			Gdx.app.exit();
+
+		switch (Gdx.app.getType()) {
+		case Android:
+			if (keycode == Keys.BACK)
+				Gdx.app.exit();
+			break;
+
+		case Desktop:
+			if (keycode == Keys.ESCAPE)
+				Gdx.app.exit();
+			break;
+
+		default:
+			break;
+		}
 
 		return false;
 	}

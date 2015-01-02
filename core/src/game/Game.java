@@ -24,7 +24,8 @@ import entities.Player;
 public class Game extends ApplicationAdapter {
 
 	public final static String TITLE = "Obstakles";
-	public final static String INFO = "Tap anywhere to begin";
+
+	public static String INFO;
 	public final static String CREDITS = "© 2014 Henrique Ferrolho";
 
 	public static float GRAVITY;
@@ -45,6 +46,19 @@ public class Game extends ApplicationAdapter {
 	public void create() {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		Gdx.input.setCatchBackKey(true);
+
+		switch (Gdx.app.getType()) {
+		case Android:
+			INFO = "Tap anywhere to begin";
+			break;
+
+		case Desktop:
+			INFO = "Click anywhere to begin";
+			break;
+
+		default:
+			break;
+		}
 
 		screenDimension = new Vector2();
 		updateScreenDimension();

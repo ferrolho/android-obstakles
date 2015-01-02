@@ -25,6 +25,42 @@ public class Obstacle extends Polygon {
 	public float rotation, rotationSpeed;
 	public Color color;
 
+	// // rectangle constructor
+	// public Obstacle() {
+	// float x = MathUtils.random(Game.screenDimension.x);
+	// float y = Game.screenDimension.y;
+	//
+	// float width = MathUtils.random(0.01f * Game.screenDimension.x,
+	// 0.2f * Game.screenDimension.x);
+	// float height = MathUtils.random(0.01f * Game.screenDimension.x,
+	// 0.2f * Game.screenDimension.x);
+	//
+	// float[] vertices = new float[] { x, y, x + width, y, x + width,
+	// y + height, x, y + height };
+	// setVertices(vertices);
+	// setOrigin(x + width / 2, y + height / 2);
+	//
+	// rotation = 0;
+	// rotationSpeed = MathUtils.random(-maxRotationSpeed, maxRotationSpeed);
+	//
+	// displacement = new Vector2();
+	// velocity = new Vector2(0, -0.5f * Math.abs(rotationSpeed));
+	//
+	// Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+	// pix.setColor(Game.obstacleColors.get(MathUtils
+	// .random(Game.obstacleColors.size - 1)));
+	// pix.fill();
+	//
+	// Texture textureSolid = new Texture(pix);
+	// textureRegion = new TextureRegion(textureSolid);
+	// triangles = new short[] { 0, 1, 2, 0, 2, 3 };
+	//
+	// PolygonRegion polyReg = new PolygonRegion(textureRegion,
+	// getTransformedVertices(), triangles);
+	// polygonSprite = new PolygonSprite(polyReg);
+	// polygonSprite.setRegion(polyReg);
+	// }
+
 	public Obstacle() {
 		float x = MathUtils.random(Game.screenDimension.x);
 		float y = Game.screenDimension.y;

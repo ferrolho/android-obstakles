@@ -1,5 +1,9 @@
 package states;
 
+import entities.Obstacle;
+import entities.Player;
+import game.Game;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,10 +20,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
-
-import entities.Obstacle;
-import entities.Player;
-import game.Game;
+import com.badlogic.gdx.utils.Array;
 
 public class GamePlayState extends State implements InputProcessor {
 
@@ -61,20 +62,34 @@ public class GamePlayState extends State implements InputProcessor {
 
 		boolean movingLeft = false, movingRight = false;
 
-		Iterator<Entry<Integer, Touch>> it = touches.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<Integer, Touch> pairs = it.next();
-			Touch touch = pairs.getValue();
+		switch (Gdx.app.getType()) {
+		case Android:
+			Iterator<Entry<Integer, Touch>> it = touches.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<Integer, Touch> pairs = it.next();
+				Touch touch = pairs.getValue();
 
-			if (touch.touched) {
-				if (touch.position.x < Game.screenDimension.x / 2) {
-					movingLeft = true;
-					Gdx.app.debug("Touch", "move left");
-				} else {
-					movingRight = true;
-					Gdx.app.debug("Touch", "move right");
+				if (touch.touched) {
+					if (touch.position.x < Game.screenDimension.x / 2) {
+						movingLeft = true;
+						Gdx.app.debug("Touch", "move left");
+					} else {
+						movingRight = true;
+						Gdx.app.debug("Touch", "move right");
+					}
 				}
 			}
+			break;
+
+		case Desktop:
+			if (keys.contains(Keys.LEFT, true))
+				movingLeft = true;
+			if (keys.contains(Keys.RIGHT, true))
+				movingRight = true;
+			break;
+
+		default:
+			break;
 		}
 
 		Game.player.update(movingLeft, movingRight);
@@ -129,17 +144,35 @@ public class GamePlayState extends State implements InputProcessor {
 	}
 
 	private Map<Integer, Touch> touches = new HashMap<Integer, Touch>();
+	private Array<Integer> keys = new Array<Integer>();
 
 	@Override
 	public boolean keyDown(int keycode) {
-		if (keycode == Keys.BACK)
-			StateManager.changeState(new MainMenuState());
+		switch (Gdx.app.getType()) {
+		case Android:
+			if (keycode == Keys.BACK)
+				StateManager.changeState(new MainMenuState());
+			break;
+
+		case Desktop:
+			if (keycode == Keys.ESCAPE)
+				StateManager.changeState(new MainMenuState());
+			break;
+
+		default:
+			break;
+		}
+
+		if (!keys.contains(keycode, true))
+			keys.add(keycode);
 
 		return false;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
+		keys.removeValue(keycode, true);
+
 		return false;
 	}
 
