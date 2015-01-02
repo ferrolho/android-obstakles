@@ -3,7 +3,11 @@ Obstakles
 Another android game.
 
 #Download
+##Android
 Click [here](/android/apk/obstakles-android.apk?raw=true) to download the apk.
+
+##Desktop
+Click [here](/desktop/binaries/obstakles.jar?raw=true) to download the jar.
 
 #To do
 - Different obstacle shapes;
