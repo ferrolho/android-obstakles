@@ -3,10 +3,10 @@ Obstakles
 Another android game.
 
 #Download
-##Android
+###Android
 Click [here](/android/apk/obstakles-android.apk?raw=true) to download the apk.
 
-##Desktop
+###Desktop
 Click [here](/desktop/binaries/obstakles.jar?raw=true) to download the jar.
 
 #To do
