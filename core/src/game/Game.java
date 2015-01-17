@@ -2,7 +2,6 @@ package game;
 
 import java.util.Iterator;
 
-import states.GameOverState;
 import states.MainMenuState;
 import states.StateManager;
 import utilities.FontManager;
@@ -10,6 +9,7 @@ import utilities.FontManager;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -37,6 +37,13 @@ public class Game extends ApplicationAdapter {
 	public static PolygonSpriteBatch polygonSpriteBatch;
 
 	FontManager fontManager;
+
+	private static Preferences prefs;
+	private final static String PREFERENCES_ID = "scores";
+	private final static String BEST_ID = "best";
+
+	public static float lastScore;
+	public static float bestScore;
 
 	public static Sound bumpSound, thumpSound;
 
@@ -87,8 +94,6 @@ public class Game extends ApplicationAdapter {
 
 		obstacles = new Array<Obstacle>();
 
-		loadBestScore();
-
 		StateManager.changeState(new MainMenuState());
 	}
 
@@ -116,8 +121,16 @@ public class Game extends ApplicationAdapter {
 		thumpSound.dispose();
 	}
 
-	private void loadBestScore() {
-		GameOverState.bestScore = 0;
+	public static void udpateScore() {
+		prefs = Gdx.app.getPreferences(PREFERENCES_ID);
+		bestScore = prefs.getFloat(BEST_ID, 0);
+
+		if (lastScore > bestScore) {
+			bestScore = lastScore;
+
+			prefs.putFloat(BEST_ID, bestScore);
+			prefs.flush();
+		}
 	}
 
 	public static final void clearScreen(float red, float green, float blue,

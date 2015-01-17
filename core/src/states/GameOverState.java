@@ -5,12 +5,12 @@ import game.Game;
 import java.text.DecimalFormat;
 
 import utilities.FontManager;
+import utilities.Label;
 import utilities.Touch;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -19,27 +19,14 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class GameOverState extends State implements InputProcessor {
 
-	private final static String GAME_OVER = "Game Over";
-	private final static int GAME_OVER_SIZE = (int) Math
-			.round(0.1 * Game.screenDimension.x);
-	private final static float GAME_OVER_POS = 0.8f;
+	private final static Label gameOverLbl = new Label("Game Over",
+			(int) Math.round(0.1 * Game.screenDimension.x), 0.8f);
 
-	private final static int SCORE_SIZE = (int) Math
-			.round(0.06 * Game.screenDimension.x);
-	private final static float SCORE_POS = 0.6f;
+	private final static Label scoreLbl = new Label("",
+			(int) Math.round(0.06 * Game.screenDimension.x), 0.6f);
 
-	private final static String BUTTON_TEXT = "Main Menu";
-	private final static int BUTTON_FONT_SIZE = (int) Math
-			.round(0.05 * Game.screenDimension.x);
-	private final static float BUTTON_POS = 0.2f;
-
-	private final static String PREFERENCES_ID = "scores";
-	private final static String BEST_ID = "best";
-
-	private Preferences prefs;
-
-	public static float lastScore;
-	public static float bestScore;
+	private final static Label buttonLbl = new Label("Main Menu",
+			(int) Math.round(0.05 * Game.screenDimension.x), 0.2f);
 
 	private Touch touch;
 
@@ -51,29 +38,21 @@ public class GameOverState extends State implements InputProcessor {
 	public void create() {
 		Gdx.input.setInputProcessor(this);
 
-		prefs = Gdx.app.getPreferences(PREFERENCES_ID);
-		bestScore = prefs.getFloat(BEST_ID, 0);
-
-		if (lastScore > bestScore) {
-			bestScore = lastScore;
-
-			prefs.putFloat(BEST_ID, bestScore);
-			prefs.flush();
-		}
+		Game.udpateScore();
 
 		touch = new Touch();
 
 		filterColor = new Color(0, 0, 0, 0.3f);
 
 		// building button
-		BitmapFont font = FontManager.getFont(BUTTON_FONT_SIZE);
+		BitmapFont font = FontManager.getFont(buttonLbl.size);
 
-		float w = 1.2f * font.getBounds(BUTTON_TEXT).width;
-		float h = font.getBounds(BUTTON_TEXT).height + 0.2f
-				* font.getBounds(BUTTON_TEXT).width;
+		float w = 1.2f * font.getBounds(buttonLbl.text).width;
+		float h = font.getBounds(buttonLbl.text).height + 0.2f
+				* font.getBounds(buttonLbl.text).width;
 
 		float x = Game.screenDimension.x / 2 - w / 2;
-		float y = BUTTON_POS * Game.screenDimension.y - h / 2;
+		float y = buttonLbl.position * Game.screenDimension.y - h / 2;
 
 		button = new Rectangle(x, y, w, h);
 	}
@@ -110,39 +89,39 @@ public class GameOverState extends State implements InputProcessor {
 	}
 
 	private void renderTitle() {
-		BitmapFont font = FontManager.getFont(GAME_OVER_SIZE);
+		BitmapFont font = FontManager.getFont(gameOverLbl.size);
 
-		float x = Game.screenDimension.x / 2 - font.getBounds(GAME_OVER).width
-				/ 2;
-		float y = GAME_OVER_POS * Game.screenDimension.y
-				+ font.getBounds(GAME_OVER).height / 2;
+		float x = Game.screenDimension.x / 2
+				- font.getBounds(gameOverLbl.text).width / 2;
+		float y = gameOverLbl.position * Game.screenDimension.y
+				+ font.getBounds(gameOverLbl.text).height / 2;
 
 		Game.spriteBatch.begin();
 		font.setColor(Color.WHITE);
-		font.draw(Game.spriteBatch, GAME_OVER, x, y);
+		font.draw(Game.spriteBatch, gameOverLbl.text, x, y);
 		Game.spriteBatch.end();
 	}
 
 	private void renderScore() {
-		BitmapFont font = FontManager.getFont(SCORE_SIZE);
+		BitmapFont font = FontManager.getFont(scoreLbl.size);
 
 		DecimalFormat f = new DecimalFormat("##0.00");
-		String lastScoreStr = "Score: " + f.format(lastScore);
-		String bestScoreStr = "Best: " + f.format(bestScore);
+		String lastScoreStr = "Score: " + f.format(Game.lastScore);
+		String bestScoreStr = "Best: " + f.format(Game.bestScore);
 
 		float lastX = Game.screenDimension.x / 2
 				- font.getBounds(lastScoreStr).width / 2;
-		float lastY = SCORE_POS * Game.screenDimension.y
+		float lastY = scoreLbl.position * Game.screenDimension.y
 				+ font.getBounds(lastScoreStr).height / 2;
 
 		float bestX = Game.screenDimension.x / 2
 				- font.getBounds(bestScoreStr).width / 2;
-		float bestY = SCORE_POS * Game.screenDimension.y
+		float bestY = scoreLbl.position * Game.screenDimension.y
 				+ font.getBounds(bestScoreStr).height / 2 - 2.5f
 				* font.getBounds(lastScoreStr).height;
 
 		Game.spriteBatch.begin();
-		if (lastScore == bestScore)
+		if (Game.lastScore == Game.bestScore)
 			font.setColor(0, 1, 0, 1);
 		else
 			font.setColor(Color.WHITE);
@@ -160,16 +139,16 @@ public class GameOverState extends State implements InputProcessor {
 		Game.shapeRenderer.end();
 
 		// button text
-		BitmapFont font = FontManager.getFont(BUTTON_FONT_SIZE);
+		BitmapFont font = FontManager.getFont(buttonLbl.size);
 
 		float x = Game.screenDimension.x / 2
-				- font.getBounds(BUTTON_TEXT).width / 2;
-		float y = BUTTON_POS * Game.screenDimension.y
-				+ font.getBounds(BUTTON_TEXT).height / 2;
+				- font.getBounds(buttonLbl.text).width / 2;
+		float y = buttonLbl.position * Game.screenDimension.y
+				+ font.getBounds(buttonLbl.text).height / 2;
 
 		Game.spriteBatch.begin();
 		font.setColor(0, 0, 0, 1);
-		font.draw(Game.spriteBatch, BUTTON_TEXT, x, y);
+		font.draw(Game.spriteBatch, buttonLbl.text, x, y);
 		Game.spriteBatch.end();
 
 		// button borders
