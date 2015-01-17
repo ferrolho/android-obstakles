@@ -28,7 +28,6 @@ public class FontManager {
 			return null;
 
 		if (fonts.get(size) == null) {
-			fonts.put(size, new BitmapFont());
 			param.size = size;
 			fonts.put(size, generator.generateFont(param));
 		}

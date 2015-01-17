@@ -16,15 +16,12 @@ import utilities.Touch;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
 public class GamePlayState extends State implements InputProcessor {
-
-	public static Sound bumpSound, thumpSound;
 
 	private float obstacleSpawnProb;
 
@@ -33,10 +30,6 @@ public class GamePlayState extends State implements InputProcessor {
 
 	@Override
 	public void create() {
-		// load the shock sound effect
-		bumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
-		thumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/thump.wav"));
-
 		obstacleSpawnProb = 1;
 
 		scoreFontSize = (int) (0.05 * Game.screenDimension.x);
@@ -82,9 +75,9 @@ public class GamePlayState extends State implements InputProcessor {
 			break;
 
 		case Desktop:
-			if (keys.contains(Keys.LEFT, true))
+			if (keys.contains(Keys.LEFT, true) || keys.contains(Keys.A, true))
 				movingLeft = true;
-			if (keys.contains(Keys.RIGHT, true))
+			if (keys.contains(Keys.RIGHT, true) || keys.contains(Keys.D, true))
 				movingRight = true;
 			break;
 
@@ -102,7 +95,7 @@ public class GamePlayState extends State implements InputProcessor {
 		// check player collision
 		for (Obstacle obstacle : Game.obstacles) {
 			if (Game.player.overlaps(obstacle)) {
-				thumpSound.play();
+				Game.thumpSound.play();
 				GameOverState.lastScore = elapsedTime;
 				StateManager.changeState(new GameOverState());
 			}
@@ -139,8 +132,6 @@ public class GamePlayState extends State implements InputProcessor {
 
 	@Override
 	public void dispose() {
-		bumpSound.dispose();
-		thumpSound.dispose();
 	}
 
 	private Map<Integer, Touch> touches = new HashMap<Integer, Touch>();

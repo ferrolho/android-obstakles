@@ -1,7 +1,6 @@
 package entities;
 
 import game.Game;
-import states.GamePlayState;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -97,7 +96,7 @@ public class Player extends Rectangle {
 			x += velocity.x;
 			y += velocity.y;
 
-			GamePlayState.bumpSound.play();
+			Game.bumpSound.play();
 		} else if (x + width > Game.screenDimension.x) {
 			velocity.x = -2 * topSpeed;
 			velocity.y = 10 * Game.GRAVITY;
@@ -105,7 +104,7 @@ public class Player extends Rectangle {
 			x += velocity.x;
 			y += velocity.y;
 
-			GamePlayState.bumpSound.play();
+			Game.bumpSound.play();
 		}
 	}
 

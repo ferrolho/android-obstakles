@@ -10,6 +10,7 @@ import utilities.FontManager;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
@@ -36,6 +37,8 @@ public class Game extends ApplicationAdapter {
 	public static PolygonSpriteBatch polygonSpriteBatch;
 
 	FontManager fontManager;
+
+	public static Sound bumpSound, thumpSound;
 
 	public static Array<Color> obstacleColors;
 	public static Array<Obstacle> obstacles;
@@ -70,6 +73,10 @@ public class Game extends ApplicationAdapter {
 
 		fontManager = new FontManager();
 
+		// load the shock sound effect
+		bumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
+		thumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/thump.wav"));
+
 		obstacleColors = new Array<Color>();
 		obstacleColors.add(Color.CYAN);
 		obstacleColors.add(Color.GREEN);
@@ -101,9 +108,12 @@ public class Game extends ApplicationAdapter {
 
 	@Override
 	public void dispose() {
+		StateManager.disposeState();
+
 		spriteBatch.dispose();
 		fontManager.dispose();
-		StateManager.disposeState();
+		bumpSound.dispose();
+		thumpSound.dispose();
 	}
 
 	private void loadBestScore() {

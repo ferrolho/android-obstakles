@@ -186,15 +186,26 @@ public class GameOverState extends State implements InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
-		if (keycode == Keys.BACK)
-			StateManager.changeState(new MainMenuState());
+		switch (Gdx.app.getType()) {
+		case Android:
+			if (keycode == Keys.BACK)
+				StateManager.changeState(new MainMenuState());
+			break;
+
+		case Desktop:
+			if (keycode == Keys.ESCAPE)
+				StateManager.changeState(new MainMenuState());
+			break;
+
+		default:
+			break;
+		}
 
 		return false;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
