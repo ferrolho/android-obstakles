@@ -44,17 +44,7 @@ public class GameOverState extends State implements InputProcessor {
 
 		filterColor = new Color(0, 0, 0, 0.3f);
 
-		// building button
-		BitmapFont font = FontManager.getFont(buttonLbl.size);
-
-		float w = 1.2f * font.getBounds(buttonLbl.text).width;
-		float h = font.getBounds(buttonLbl.text).height + 0.2f
-				* font.getBounds(buttonLbl.text).width;
-
-		float x = Game.screenDimension.x / 2 - w / 2;
-		float y = buttonLbl.position * Game.screenDimension.y - h / 2;
-
-		button = new Rectangle(x, y, w, h);
+		createReturnToMainMenuButton();
 	}
 
 	@Override
@@ -73,19 +63,43 @@ public class GameOverState extends State implements InputProcessor {
 
 		Game.drawObstacles();
 
-		Gdx.gl.glEnable(GL20.GL_BLEND);
-		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-		Game.shapeRenderer.begin(ShapeType.Filled);
-		Game.shapeRenderer.setColor(filterColor);
-		Game.shapeRenderer.rect(0, 0, Game.screenDimension.x,
-				Game.screenDimension.y);
-		Game.shapeRenderer.end();
-		Gdx.gl.glDisable(GL20.GL_BLEND);
+		renderFilter();
 
 		renderTitle();
 		renderScore();
-
 		renderButton();
+	}
+
+	@Override
+	public void dispose() {
+	}
+
+	private void createReturnToMainMenuButton() {
+		BitmapFont font = FontManager.getFont(buttonLbl.size);
+
+		float w = 1.2f * font.getBounds(buttonLbl.text).width;
+		float h = font.getBounds(buttonLbl.text).height + 0.2f
+				* font.getBounds(buttonLbl.text).width;
+
+		float x = Game.screenDimension.x / 2 - w / 2;
+		float y = buttonLbl.position * Game.screenDimension.y - h / 2;
+
+		button = new Rectangle(x, y, w, h);
+	}
+
+	private void renderFilter() {
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+		Game.shapeRenderer.begin(ShapeType.Filled);
+
+		Game.shapeRenderer.setColor(filterColor);
+		Game.shapeRenderer.rect(0, 0, Game.screenDimension.x,
+				Game.screenDimension.y);
+
+		Game.shapeRenderer.end();
+
+		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 
 	private void renderTitle() {
@@ -97,8 +111,10 @@ public class GameOverState extends State implements InputProcessor {
 				+ font.getBounds(gameOverLbl.text).height / 2;
 
 		Game.spriteBatch.begin();
+
 		font.setColor(Color.WHITE);
 		font.draw(Game.spriteBatch, gameOverLbl.text, x, y);
+
 		Game.spriteBatch.end();
 	}
 
@@ -121,21 +137,26 @@ public class GameOverState extends State implements InputProcessor {
 				* font.getBounds(lastScoreStr).height;
 
 		Game.spriteBatch.begin();
+
 		if (Game.lastScore == Game.bestScore)
 			font.setColor(0, 1, 0, 1);
 		else
 			font.setColor(Color.WHITE);
+
 		font.draw(Game.spriteBatch, lastScoreStr, lastX, lastY);
 		font.draw(Game.spriteBatch, bestScoreStr, bestX, bestY);
+
 		Game.spriteBatch.end();
 	}
 
 	private void renderButton() {
 		// button background
 		Game.shapeRenderer.begin(ShapeType.Filled);
+
 		Game.shapeRenderer.setColor(Color.WHITE);
 		Game.shapeRenderer
 				.rect(button.x, button.y, button.width, button.height);
+
 		Game.shapeRenderer.end();
 
 		// button text
@@ -147,20 +168,20 @@ public class GameOverState extends State implements InputProcessor {
 				+ font.getBounds(buttonLbl.text).height / 2;
 
 		Game.spriteBatch.begin();
+
 		font.setColor(0, 0, 0, 1);
 		font.draw(Game.spriteBatch, buttonLbl.text, x, y);
+
 		Game.spriteBatch.end();
 
 		// button borders
 		Game.shapeRenderer.begin(ShapeType.Line);
+
 		Game.shapeRenderer.setColor(Color.BLACK);
 		Game.shapeRenderer
 				.rect(button.x, button.y, button.width, button.height);
-		Game.shapeRenderer.end();
-	}
 
-	@Override
-	public void dispose() {
+		Game.shapeRenderer.end();
 	}
 
 	@Override
@@ -172,7 +193,7 @@ public class GameOverState extends State implements InputProcessor {
 			break;
 
 		case Desktop:
-			if (keycode == Keys.ESCAPE)
+			if (keycode == Keys.ESCAPE || keycode == Keys.SPACE)
 				StateManager.changeState(new MainMenuState());
 			break;
 

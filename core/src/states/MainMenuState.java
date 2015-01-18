@@ -32,7 +32,7 @@ public class MainMenuState extends State implements InputProcessor {
 
 	private Touch touch;
 
-	private boolean goToPlayState;
+	private boolean transitioningToPlayState;
 	private Vector2 animationPos;
 	private float animationRadius, maxRadius;
 
@@ -44,12 +44,12 @@ public class MainMenuState extends State implements InputProcessor {
 		obstacleSpawnProb = 30;
 
 		infoDisplacement = 0;
-		maxInfoDisplacement = 0.02f * Game.screenDimension.y;
-		infoSpeed = 0.0005f * Game.screenDimension.y;
+		maxInfoDisplacement = 0.04f * Game.screenDimension.y;
+		infoSpeed = 0.0015f * Game.screenDimension.y;
 
 		touch = new Touch();
 
-		goToPlayState = false;
+		transitioningToPlayState = false;
 		animationPos = new Vector2();
 		animationRadius = 0;
 		maxRadius = (float) Math.sqrt(Game.screenDimension.x
@@ -72,7 +72,7 @@ public class MainMenuState extends State implements InputProcessor {
 		if (Math.abs(infoDisplacement) > maxInfoDisplacement)
 			infoSpeed = -infoSpeed;
 
-		if (goToPlayState) {
+		if (transitioningToPlayState) {
 			animationRadius += 0.01 * Game.screenDimension.x + 0.15
 					* animationRadius;
 
@@ -91,11 +91,11 @@ public class MainMenuState extends State implements InputProcessor {
 		renderInfo();
 		renderCopyright();
 
-		Game.shapeRenderer.begin(ShapeType.Filled);
-		Game.shapeRenderer.setColor(Color.WHITE);
-		Game.shapeRenderer.circle(animationPos.x, animationPos.y,
-				animationRadius);
-		Game.shapeRenderer.end();
+		renderTransitionAnimation();
+	}
+
+	@Override
+	public void dispose() {
 	}
 
 	private void renderTitle() {
@@ -107,8 +107,10 @@ public class MainMenuState extends State implements InputProcessor {
 				+ font.getBounds(Game.TITLE).height / 2;
 
 		Game.spriteBatch.begin();
+
 		font.setColor(0, 0, 0, 1);
 		font.draw(Game.spriteBatch, Game.TITLE, x, y);
+
 		Game.spriteBatch.end();
 	}
 
@@ -121,8 +123,10 @@ public class MainMenuState extends State implements InputProcessor {
 				+ font.getBounds(Game.INFO).height / 2 + infoDisplacement;
 
 		Game.spriteBatch.begin();
+
 		font.setColor(0, 0, 0, 1);
 		font.draw(Game.spriteBatch, Game.INFO, x, y);
+
 		Game.spriteBatch.end();
 	}
 
@@ -135,13 +139,21 @@ public class MainMenuState extends State implements InputProcessor {
 				+ font.getBounds(Game.CREDITS).height / 2;
 
 		Game.spriteBatch.begin();
+
 		font.setColor(0, 0, 0, 1);
 		font.draw(Game.spriteBatch, Game.CREDITS, x, y);
+
 		Game.spriteBatch.end();
 	}
 
-	@Override
-	public void dispose() {
+	private void renderTransitionAnimation() {
+		Game.shapeRenderer.begin(ShapeType.Filled);
+
+		Game.shapeRenderer.setColor(Color.WHITE);
+		Game.shapeRenderer.circle(animationPos.x, animationPos.y,
+				animationRadius);
+
+		Game.shapeRenderer.end();
 	}
 
 	@Override
@@ -154,7 +166,9 @@ public class MainMenuState extends State implements InputProcessor {
 			break;
 
 		case Desktop:
-			if (keycode == Keys.ESCAPE)
+			if (keycode == Keys.SPACE)
+				transitioningToPlayState = true;
+			else if (keycode == Keys.ESCAPE)
 				Gdx.app.exit();
 			break;
 
@@ -186,11 +200,11 @@ public class MainMenuState extends State implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (!goToPlayState) {
+		if (!transitioningToPlayState) {
 			animationPos.x = screenX;
 			animationPos.y = Game.screenDimension.y - screenY;
 
-			goToPlayState = true;
+			transitioningToPlayState = true;
 		}
 
 		touch.position.x = 0;
