@@ -111,15 +111,21 @@ public class Player extends Rectangle {
 	}
 
 	public boolean overlaps(Obstacle obstacle) {
-		for (int i = 0; i < obstacle.getTransformedVertices().length / 2; i += 2) {
-			if (contains(obstacle.getTransformedVertices()[i],
+		if (obstacle.contains(x, y))
+			return true;
+		else if (obstacle.contains(x + width, y))
+			return true;
+		else if (obstacle.contains(x + width, y + height))
+			return true;
+		else if (obstacle.contains(x, y + height))
+			return true;
+
+		for (int i = 0; i < obstacle.getTransformedVertices().length / 2; i += 2)
+			if (this.contains(obstacle.getTransformedVertices()[i],
 					obstacle.getTransformedVertices()[i + 1]))
 				return true;
-		}
 
-		return obstacle.contains(x, y) || obstacle.contains(x + width, y)
-				|| obstacle.contains(x + width, y + height)
-				|| obstacle.contains(x, y + height);
+		return false;
 	}
 
 }

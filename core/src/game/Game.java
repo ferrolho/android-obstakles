@@ -158,7 +158,8 @@ public class Game extends ApplicationAdapter {
 
 			obstacle.update();
 
-			if (Math.abs(obstacle.displacement.y) > 1.25 * screenDimension.y)
+			if (Math.abs(obstacle.position.y) > screenDimension.y + 0.2f
+					* Game.screenDimension.x)
 				iterator.remove();
 		}
 	}

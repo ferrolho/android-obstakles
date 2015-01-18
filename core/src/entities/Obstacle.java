@@ -2,6 +2,8 @@ package entities;
 
 import game.Game;
 
+import java.util.Arrays;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -20,65 +22,19 @@ public class Obstacle extends Polygon {
 	private PolygonSprite polygonSprite;
 	private TextureRegion textureRegion;
 	private short[] triangles;
+	private float[] outlineVertices;
 
-	public Vector2 displacement, velocity;
+	public Vector2 position, velocity;
 	public float rotation, rotationSpeed;
 	public Color color;
 
-	// // rectangle constructor
-	// public Obstacle() {
-	// float x = MathUtils.random(Game.screenDimension.x);
-	// float y = Game.screenDimension.y;
-	//
-	// float width = MathUtils.random(0.01f * Game.screenDimension.x,
-	// 0.2f * Game.screenDimension.x);
-	// float height = MathUtils.random(0.01f * Game.screenDimension.x,
-	// 0.2f * Game.screenDimension.x);
-	//
-	// float[] vertices = new float[] { x, y, x + width, y, x + width,
-	// y + height, x, y + height };
-	// setVertices(vertices);
-	// setOrigin(x + width / 2, y + height / 2);
-	//
-	// rotation = 0;
-	// rotationSpeed = MathUtils.random(-maxRotationSpeed, maxRotationSpeed);
-	//
-	// displacement = new Vector2();
-	// velocity = new Vector2(0, -0.5f * Math.abs(rotationSpeed));
-	//
-	// Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-	// pix.setColor(Game.obstacleColors.get(MathUtils
-	// .random(Game.obstacleColors.size - 1)));
-	// pix.fill();
-	//
-	// Texture textureSolid = new Texture(pix);
-	// textureRegion = new TextureRegion(textureSolid);
-	// triangles = new short[] { 0, 1, 2, 0, 2, 3 };
-	//
-	// PolygonRegion polyReg = new PolygonRegion(textureRegion,
-	// getTransformedVertices(), triangles);
-	// polygonSprite = new PolygonSprite(polyReg);
-	// polygonSprite.setRegion(polyReg);
-	// }
-
 	public Obstacle() {
-		float x = MathUtils.random(Game.screenDimension.x);
-		float y = Game.screenDimension.y;
-
-		float width = MathUtils.random(0.01f * Game.screenDimension.x,
-				0.2f * Game.screenDimension.x);
-		float height = MathUtils.random(0.01f * Game.screenDimension.x,
-				0.2f * Game.screenDimension.x);
-
-		float[] vertices = new float[] { x, y, x + width, y, x + width,
-				y + height, x, y + height };
-		setVertices(vertices);
-		setOrigin(x + width / 2, y + height / 2);
+		generateGeometry();
 
 		rotation = 0;
 		rotationSpeed = MathUtils.random(-maxRotationSpeed, maxRotationSpeed);
 
-		displacement = new Vector2();
+		position = new Vector2();
 		velocity = new Vector2(0, -0.5f * Math.abs(rotationSpeed));
 
 		Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -86,39 +42,94 @@ public class Obstacle extends Polygon {
 				.random(Game.obstacleColors.size - 1)));
 		pix.fill();
 
-		Texture textureSolid = new Texture(pix);
-		textureRegion = new TextureRegion(textureSolid);
-		triangles = new short[] { 0, 1, 2, 0, 2, 3 };
+		textureRegion = new TextureRegion(new Texture(pix));
 
-		PolygonRegion polyReg = new PolygonRegion(textureRegion,
-				getTransformedVertices(), triangles);
-		polygonSprite = new PolygonSprite(polyReg);
-		polygonSprite.setRegion(polyReg);
+		updatePolyRegAndOutlineVertices();
+	}
+
+	private void generateGeometry() {
+		// randomly position obstacle center
+		Vector2 center = new Vector2(MathUtils.random(Game.screenDimension.x),
+				Game.screenDimension.y + 0.1f * Game.screenDimension.x);
+
+		// randomly pick obstacle number of vertices
+		int numVertices = MathUtils.random(4, 7);
+
+		// sector angle is the angle in which a vertex can be spawned
+		float sectorAngle = 360f / numVertices;
+
+		// allocate memory for the vertices, including the center
+		float[] vertices = new float[2 + numVertices * 2];
+
+		// save center to vertices array
+		vertices[0] = center.x;
+		vertices[1] = center.y;
+
+		// randomly place each vertex inside its own sector
+		for (int i = 0; i < numVertices; i++) {
+			float vertexAngle = MathUtils.random(sectorAngle) + i * sectorAngle;
+
+			float distToCenter = MathUtils.random(
+					0.02f * Game.screenDimension.x,
+					0.1f * Game.screenDimension.x);
+
+			// build point coordinates
+			Vector2 point = new Vector2(center.x, center.y);
+			point.x += MathUtils.cos(MathUtils.degreesToRadians * vertexAngle)
+					* distToCenter;
+			point.y += MathUtils.sin(MathUtils.degreesToRadians * vertexAngle)
+					* distToCenter;
+
+			// save it in vertices array
+			vertices[(1 + i) * 2] = point.x;
+			vertices[(1 + i) * 2 + 1] = point.y;
+		}
+
+		setOrigin(center.x, center.y);
+		setVertices(vertices);
+
+		// computing triangles required to fill shape with color
+		triangles = new short[numVertices * 3];
+		for (int i = 0; i < numVertices; i++) {
+			triangles[i * 3] = 0;
+			triangles[i * 3 + 1] = (short) (i + 1);
+			triangles[i * 3 + 2] = (i == numVertices - 1) ? 1 : (short) (i + 2);
+		}
 	}
 
 	public void update() {
 		velocity.y -= 0.1 * Game.GRAVITY;
-		displacement.y += velocity.y;
+		position.y += velocity.y;
 
 		rotation = (rotation + rotationSpeed) % 360;
 
-		setPosition(0, displacement.y);
+		setPosition(0, position.y);
 		setRotation(rotation);
 
+		updatePolyRegAndOutlineVertices();
+	}
+
+	private void updatePolyRegAndOutlineVertices() {
 		PolygonRegion polyReg = new PolygonRegion(textureRegion,
 				getTransformedVertices(), triangles);
+
 		polygonSprite = new PolygonSprite(polyReg);
 		polygonSprite.setRegion(polyReg);
+
+		outlineVertices = Arrays.copyOfRange(getTransformedVertices(), 2,
+				getTransformedVertices().length);
 	}
 
 	public void draw() {
+		// fill
 		Game.polygonSpriteBatch.begin();
 		polygonSprite.draw(Game.polygonSpriteBatch);
 		Game.polygonSpriteBatch.end();
 
+		// outline
 		Game.shapeRenderer.begin(ShapeType.Line);
 		Game.shapeRenderer.setColor(Color.BLACK);
-		Game.shapeRenderer.polygon(getTransformedVertices());
+		Game.shapeRenderer.polygon(outlineVertices);
 		Game.shapeRenderer.end();
 	}
 
