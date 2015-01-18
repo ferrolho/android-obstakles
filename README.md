@@ -14,7 +14,7 @@ Click [here](/desktop/binaries/obstakles.jar?raw=true) to download the jar.
 - Special item to clear all falling obstacles.
 
 #Screenshots
-###18-01-2015
+###Game as is on 18-01-2015
 ![image](http://i.imgur.com/9Zf442u.png)
 #####Fig. 1: Main menu
 ***
@@ -23,8 +23,8 @@ Click [here](/desktop/binaries/obstakles.jar?raw=true) to download the jar.
 ***
 ![image](http://i.imgur.com/DK5a1lv.png)
 #####Fig. 3: Game over
-
-###27-12-2014
+***
+###Game as is on 27-12-2014
 ![image](http://i.imgur.com/OjAdbx0.png)
 #####Fig. 1: Main menu
 ***
@@ -33,3 +33,4 @@ Click [here](/desktop/binaries/obstakles.jar?raw=true) to download the jar.
 ***
 ![image](http://i.imgur.com/OEoVHgi.png)
 #####Fig. 3: Game over
+***
