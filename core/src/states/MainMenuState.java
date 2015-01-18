@@ -1,7 +1,6 @@
 package states;
 
 import game.Game;
-import utilities.FontManager;
 import utilities.Label;
 import utilities.Touch;
 
@@ -17,14 +16,14 @@ import com.badlogic.gdx.math.Vector2;
 public class MainMenuState extends State implements InputProcessor {
 
 	private final static Label titleLbl = new Label("Obstakles",
-			(int) Math.round(0.15 * Game.screenDimension.x), 0.8f);
+			(int) Math.round(0.15 * Gdx.graphics.getWidth()), 0.8f);
 
 	public static Label infoLbl = new Label("",
-			(int) Math.round(0.05 * Game.screenDimension.x), 0.45f);
+			(int) Math.round(0.05 * Gdx.graphics.getWidth()), 0.45f);
 
 	private final static Label creditsLbl = new Label(
-			"© 2014 Henrique Ferrolho",
-			(int) Math.round(0.03 * Game.screenDimension.x), 0.1f);
+			"© 2014 Henrique Ferrolho", (int) Math.round(0.03 * Gdx.graphics
+					.getWidth()), 0.1f);
 
 	private Touch touch;
 	private float obstacleSpawnProb;
@@ -100,7 +99,7 @@ public class MainMenuState extends State implements InputProcessor {
 	}
 
 	private void renderTitle() {
-		BitmapFont font = FontManager.getFont(titleLbl.size);
+		BitmapFont font = Game.fontManager.getFont(titleLbl.size);
 
 		float x = Game.screenDimension.x / 2
 				- font.getBounds(titleLbl.text).width / 2;
@@ -116,7 +115,7 @@ public class MainMenuState extends State implements InputProcessor {
 	}
 
 	private void renderInfo() {
-		BitmapFont font = FontManager.getFont(infoLbl.size);
+		BitmapFont font = Game.fontManager.getFont(infoLbl.size);
 
 		float x = Game.screenDimension.x / 2
 				- font.getBounds(infoLbl.text).width / 2;
@@ -132,7 +131,7 @@ public class MainMenuState extends State implements InputProcessor {
 	}
 
 	private void renderCopyright() {
-		BitmapFont font = FontManager.getFont(creditsLbl.size);
+		BitmapFont font = Game.fontManager.getFont(creditsLbl.size);
 
 		float x = Game.screenDimension.x / 2
 				- font.getBounds(creditsLbl.text).width / 2;

@@ -4,7 +4,6 @@ import game.Game;
 
 import java.text.DecimalFormat;
 
-import utilities.FontManager;
 import utilities.Label;
 import utilities.Touch;
 
@@ -75,7 +74,7 @@ public class GameOverState extends State implements InputProcessor {
 	}
 
 	private void createReturnToMainMenuButton() {
-		BitmapFont font = FontManager.getFont(buttonLbl.size);
+		BitmapFont font = Game.fontManager.getFont(buttonLbl.size);
 
 		float w = 1.2f * font.getBounds(buttonLbl.text).width;
 		float h = font.getBounds(buttonLbl.text).height + 0.2f
@@ -103,7 +102,7 @@ public class GameOverState extends State implements InputProcessor {
 	}
 
 	private void renderTitle() {
-		BitmapFont font = FontManager.getFont(gameOverLbl.size);
+		BitmapFont font = Game.fontManager.getFont(gameOverLbl.size);
 
 		float x = Game.screenDimension.x / 2
 				- font.getBounds(gameOverLbl.text).width / 2;
@@ -119,7 +118,7 @@ public class GameOverState extends State implements InputProcessor {
 	}
 
 	private void renderScore() {
-		BitmapFont font = FontManager.getFont(scoreLbl.size);
+		BitmapFont font = Game.fontManager.getFont(scoreLbl.size);
 
 		DecimalFormat f = new DecimalFormat("##0.00");
 		String lastScoreStr = "Score: " + f.format(Game.lastScore);
@@ -160,7 +159,7 @@ public class GameOverState extends State implements InputProcessor {
 		Game.shapeRenderer.end();
 
 		// button text
-		BitmapFont font = FontManager.getFont(buttonLbl.size);
+		BitmapFont font = Game.fontManager.getFont(buttonLbl.size);
 
 		float x = Game.screenDimension.x / 2
 				- font.getBounds(buttonLbl.text).width / 2;

@@ -24,28 +24,25 @@ import entities.Player;
 
 public class Game extends ApplicationAdapter {
 
-	public static float GRAVITY;
 	public static Vector2 screenDimension;
+	public static float GRAVITY;
 
+	public static FontManager fontManager;
+	public static PolygonSpriteBatch polygonSpriteBatch;
 	public static ShapeRenderer shapeRenderer;
 	public static SpriteBatch spriteBatch;
-	public static PolygonSpriteBatch polygonSpriteBatch;
-
-	FontManager fontManager;
-
-	private static Preferences prefs;
-	private final static String PREFERENCES_ID = "scores";
-	private final static String BEST_ID = "best";
-
-	public static float lastScore;
-	public static float bestScore;
 
 	public static Sound bumpSound, thumpSound;
 
-	public static Array<Color> obstacleColors;
-	public static Array<Obstacle> obstacles;
+	private final static String PREFERENCES_ID = "scores";
+	private final static String BEST_ID = "best";
+
+	public static float lastScore, bestScore;
 
 	public static Player player;
+
+	public static Array<Color> obstacleColors;
+	public static Array<Obstacle> obstacles;
 
 	@Override
 	public void create() {
@@ -65,20 +62,19 @@ public class Game extends ApplicationAdapter {
 			break;
 		}
 
-		screenDimension = new Vector2();
 		updateScreenDimension();
 		GRAVITY = 0.002f * screenDimension.x;
 
+		fontManager = new FontManager();
+		polygonSpriteBatch = new PolygonSpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 		spriteBatch = new SpriteBatch();
-		polygonSpriteBatch = new PolygonSpriteBatch();
-
-		fontManager = new FontManager();
 
 		// load the shock sound effect
 		bumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
 		thumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/thump.wav"));
 
+		// available obstacle colors
 		obstacleColors = new Array<Color>();
 		obstacleColors.add(Color.CYAN);
 		obstacleColors.add(Color.GREEN);
@@ -89,6 +85,7 @@ public class Game extends ApplicationAdapter {
 
 		obstacles = new Array<Obstacle>();
 
+		// go to main menu
 		StateManager.changeState(new MainMenuState());
 	}
 
@@ -110,14 +107,17 @@ public class Game extends ApplicationAdapter {
 	public void dispose() {
 		StateManager.disposeState();
 
-		spriteBatch.dispose();
-		fontManager.dispose();
 		bumpSound.dispose();
 		thumpSound.dispose();
+
+		fontManager.dispose();
+		polygonSpriteBatch.dispose();
+		shapeRenderer.dispose();
+		spriteBatch.dispose();
 	}
 
 	public static void udpateScore() {
-		prefs = Gdx.app.getPreferences(PREFERENCES_ID);
+		Preferences prefs = Gdx.app.getPreferences(PREFERENCES_ID);
 		bestScore = prefs.getFloat(BEST_ID, 0);
 
 		if (lastScore > bestScore) {
@@ -128,15 +128,18 @@ public class Game extends ApplicationAdapter {
 		}
 	}
 
+	private void updateScreenDimension() {
+		if (screenDimension == null)
+			screenDimension = new Vector2();
+
+		screenDimension.x = Gdx.graphics.getWidth();
+		screenDimension.y = Gdx.graphics.getHeight();
+	}
+
 	public static final void clearScreen(float red, float green, float blue,
 			float alpha) {
 		Gdx.gl.glClearColor(red / 255.0f, green / 255.0f, blue / 255.0f, alpha);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-	}
-
-	private void updateScreenDimension() {
-		screenDimension.x = Gdx.graphics.getWidth();
-		screenDimension.y = Gdx.graphics.getHeight();
 	}
 
 	public static void clearObstacles() {

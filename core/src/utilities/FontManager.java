@@ -12,9 +12,9 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 
 public class FontManager {
 
-	private static FreeTypeFontGenerator generator;
-	private static FreeTypeFontParameter param;
-	private static Map<Integer, BitmapFont> fonts;
+	private FreeTypeFontGenerator generator;
+	private FreeTypeFontParameter param;
+	private Map<Integer, BitmapFont> fonts;
 
 	public FontManager() {
 		generator = new FreeTypeFontGenerator(
@@ -23,7 +23,7 @@ public class FontManager {
 		fonts = new HashMap<Integer, BitmapFont>();
 	}
 
-	public static BitmapFont getFont(int size) {
+	public BitmapFont getFont(int size) {
 		if (generator == null || param == null || fonts == null)
 			return null;
 

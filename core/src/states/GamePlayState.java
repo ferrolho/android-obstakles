@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import utilities.FontManager;
 import utilities.Touch;
 
 import com.badlogic.gdx.Gdx;
@@ -115,7 +114,7 @@ public class GamePlayState extends State implements InputProcessor {
 	}
 
 	private void renderScore() {
-		BitmapFont font = FontManager.getFont(scoreFontSize);
+		BitmapFont font = Game.fontManager.getFont(scoreFontSize);
 
 		DecimalFormat f = new DecimalFormat("##0.00");
 		String elapsedTimeStr = f.format(elapsedTime);
