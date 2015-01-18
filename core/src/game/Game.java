@@ -24,11 +24,6 @@ import entities.Player;
 
 public class Game extends ApplicationAdapter {
 
-	public final static String TITLE = "Obstakles";
-
-	public static String INFO;
-	public final static String CREDITS = "© 2014 Henrique Ferrolho";
-
 	public static float GRAVITY;
 	public static Vector2 screenDimension;
 
@@ -59,11 +54,11 @@ public class Game extends ApplicationAdapter {
 
 		switch (Gdx.app.getType()) {
 		case Android:
-			INFO = "Tap anywhere to begin";
+			MainMenuState.infoLbl.text = "Tap anywhere to begin";
 			break;
 
 		case Desktop:
-			INFO = "Click anywhere to begin";
+			MainMenuState.infoLbl.text = "Click anywhere to begin";
 			break;
 
 		default:

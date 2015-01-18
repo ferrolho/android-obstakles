@@ -2,7 +2,7 @@ package utilities;
 
 public class Label {
 
-	public final String text;
+	public String text;
 	public final int size;
 	public final float position;
 

@@ -2,6 +2,7 @@ package states;
 
 import game.Game;
 import utilities.FontManager;
+import utilities.Label;
 import utilities.Touch;
 
 import com.badlogic.gdx.Gdx;
@@ -15,22 +16,19 @@ import com.badlogic.gdx.math.Vector2;
 
 public class MainMenuState extends State implements InputProcessor {
 
-	private final static int TITLE_SIZE = (int) Math
-			.round(0.15 * Game.screenDimension.x);
-	private final static int INFO_SIZE = (int) Math
-			.round(0.05 * Game.screenDimension.x);
-	private final static int CREDITS_SIZE = (int) Math
-			.round(0.03 * Game.screenDimension.x);
+	private final static Label titleLbl = new Label("Obstakles",
+			(int) Math.round(0.15 * Game.screenDimension.x), 0.8f);
 
-	private final static float TITLE_POS = 0.8f;
-	private final static float INFO_POS = 0.45f;
-	private final static float CREDITS_POS = 0.1f;
+	public static Label infoLbl = new Label("",
+			(int) Math.round(0.05 * Game.screenDimension.x), 0.45f);
 
-	private float obstacleSpawnProb;
-
-	private float infoDisplacement, maxInfoDisplacement, infoSpeed;
+	private final static Label creditsLbl = new Label(
+			"© 2014 Henrique Ferrolho",
+			(int) Math.round(0.03 * Game.screenDimension.x), 0.1f);
 
 	private Touch touch;
+	private float obstacleSpawnProb;
+	private float infoDisplacement, maxInfoDisplacement, infoSpeed;
 
 	private boolean transitioningToPlayState;
 	private Vector2 animationPos;
@@ -40,14 +38,14 @@ public class MainMenuState extends State implements InputProcessor {
 	public void create() {
 		Gdx.input.setInputProcessor(this);
 
+		touch = new Touch();
+
 		Game.clearObstacles();
 		obstacleSpawnProb = 30;
 
 		infoDisplacement = 0;
 		maxInfoDisplacement = 0.04f * Game.screenDimension.y;
 		infoSpeed = 0.0015f * Game.screenDimension.y;
-
-		touch = new Touch();
 
 		transitioningToPlayState = false;
 		animationPos = new Vector2();
@@ -65,13 +63,16 @@ public class MainMenuState extends State implements InputProcessor {
 	public void update() {
 		Game.updateObstacles();
 
+		// update falling objects
 		if (MathUtils.random(100) <= obstacleSpawnProb)
 			Game.spawnObstacle();
 
+		// update info animation
 		infoDisplacement += infoSpeed;
 		if (Math.abs(infoDisplacement) > maxInfoDisplacement)
 			infoSpeed = -infoSpeed;
 
+		// update transition animation
 		if (transitioningToPlayState) {
 			animationRadius += 0.01 * Game.screenDimension.x + 0.15
 					* animationRadius;
@@ -99,49 +100,49 @@ public class MainMenuState extends State implements InputProcessor {
 	}
 
 	private void renderTitle() {
-		BitmapFont font = FontManager.getFont(TITLE_SIZE);
+		BitmapFont font = FontManager.getFont(titleLbl.size);
 
-		float x = Game.screenDimension.x / 2 - font.getBounds(Game.TITLE).width
-				/ 2;
-		float y = TITLE_POS * Game.screenDimension.y
-				+ font.getBounds(Game.TITLE).height / 2;
+		float x = Game.screenDimension.x / 2
+				- font.getBounds(titleLbl.text).width / 2;
+		float y = titleLbl.position * Game.screenDimension.y
+				+ font.getBounds(titleLbl.text).height / 2;
 
 		Game.spriteBatch.begin();
 
 		font.setColor(0, 0, 0, 1);
-		font.draw(Game.spriteBatch, Game.TITLE, x, y);
+		font.draw(Game.spriteBatch, titleLbl.text, x, y);
 
 		Game.spriteBatch.end();
 	}
 
 	private void renderInfo() {
-		BitmapFont font = FontManager.getFont(INFO_SIZE);
+		BitmapFont font = FontManager.getFont(infoLbl.size);
 
-		float x = Game.screenDimension.x / 2 - font.getBounds(Game.INFO).width
-				/ 2;
-		float y = INFO_POS * Game.screenDimension.y
-				+ font.getBounds(Game.INFO).height / 2 + infoDisplacement;
+		float x = Game.screenDimension.x / 2
+				- font.getBounds(infoLbl.text).width / 2;
+		float y = infoLbl.position * Game.screenDimension.y
+				+ font.getBounds(infoLbl.text).height / 2 + infoDisplacement;
 
 		Game.spriteBatch.begin();
 
 		font.setColor(0, 0, 0, 1);
-		font.draw(Game.spriteBatch, Game.INFO, x, y);
+		font.draw(Game.spriteBatch, infoLbl.text, x, y);
 
 		Game.spriteBatch.end();
 	}
 
 	private void renderCopyright() {
-		BitmapFont font = FontManager.getFont(CREDITS_SIZE);
+		BitmapFont font = FontManager.getFont(creditsLbl.size);
 
 		float x = Game.screenDimension.x / 2
-				- font.getBounds(Game.CREDITS).width / 2;
-		float y = CREDITS_POS * Game.screenDimension.y
-				+ font.getBounds(Game.CREDITS).height / 2;
+				- font.getBounds(creditsLbl.text).width / 2;
+		float y = creditsLbl.position * Game.screenDimension.y
+				+ font.getBounds(creditsLbl.text).height / 2;
 
 		Game.spriteBatch.begin();
 
 		font.setColor(0, 0, 0, 1);
-		font.draw(Game.spriteBatch, Game.CREDITS, x, y);
+		font.draw(Game.spriteBatch, creditsLbl.text, x, y);
 
 		Game.spriteBatch.end();
 	}
