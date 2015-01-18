@@ -11,10 +11,9 @@ public class Player extends Rectangle {
 
 	private static final long serialVersionUID = 1L;
 
+	public Color color;
 	public Vector2 velocity;
 	public float acceleration, breakSpeed, topSpeed;
-
-	public Color color;
 
 	public Player(Color color) {
 		this.color = color;
@@ -67,18 +66,12 @@ public class Player extends Rectangle {
 
 		// update x
 		x += velocity.x;
+
 		// update y
 		velocity.y -= Game.GRAVITY;
 		y += velocity.y;
 
 		updateCollisions();
-	}
-
-	public void draw() {
-		Game.shapeRenderer.begin(ShapeType.Filled);
-		Game.shapeRenderer.setColor(color);
-		Game.shapeRenderer.rect(x, y, width, height);
-		Game.shapeRenderer.end();
 	}
 
 	private void updateCollisions() {
@@ -106,6 +99,15 @@ public class Player extends Rectangle {
 
 			Game.bumpSound.play();
 		}
+	}
+
+	public void draw() {
+		Game.shapeRenderer.begin(ShapeType.Filled);
+
+		Game.shapeRenderer.setColor(color);
+		Game.shapeRenderer.rect(x, y, width, height);
+
+		Game.shapeRenderer.end();
 	}
 
 	public boolean overlaps(Obstacle obstacle) {
