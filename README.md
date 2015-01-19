@@ -8,7 +8,8 @@ Another android game.
 |[![image](http://i.imgur.com/64IJLRD.png)](https://play.google.com/store/apps/details?id=com.ferrolho.obstakles)|Click [here](/desktop/binaries/obstakles.jar?raw=true) to download the jar.|
 
 #To do
-- Special item to clear all falling obstacles (?).
+- [x] Different obstacle shapes
+- [ ] Special item to clear all falling obstacles (?)
 
 #Screenshots
 ###Game as is on 18-01-2015
