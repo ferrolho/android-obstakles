@@ -4,7 +4,7 @@ Another android game.
 
 #Download
 ###Android
-Click [here](/android/apk/obstakles-android.apk?raw=true) to download the apk.
+[![image](http://i.imgur.com/64IJLRD.png)](https://play.google.com/store/apps/details?id=com.ferrolho.obstakles)
 
 ###Desktop
 Click [here](/desktop/binaries/obstakles.jar?raw=true) to download the jar.
