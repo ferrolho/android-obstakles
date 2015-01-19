@@ -3,11 +3,9 @@ Obstakles
 Another android game.
 
 #Download
-###Android
-[![image](http://i.imgur.com/64IJLRD.png)](https://play.google.com/store/apps/details?id=com.ferrolho.obstakles)
-
-###Desktop
-Click [here](/desktop/binaries/obstakles.jar?raw=true) to download the jar.
+|Android|Desktop|
+|-------|-------|
+|[![image](http://i.imgur.com/64IJLRD.png)](https://play.google.com/store/apps/details?id=com.ferrolho.obstakles)|Click [here](/desktop/binaries/obstakles.jar?raw=true) to download the jar.|
 
 #To do
 - Different obstacle shapes;
