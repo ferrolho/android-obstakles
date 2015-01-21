@@ -7,13 +7,17 @@ Another android game.
 |-------|-------|
 |[![image](http://i.imgur.com/64IJLRD.png)](https://play.google.com/store/apps/details?id=com.ferrolho.obstakles)|Click [here](/desktop/binaries/obstakles.jar?raw=true) to download the jar.|
 
-#To do
+#Changelog
+##To do
 - [ ] Add leaderboards
 - [ ] Add instructions
 - [ ] Add try again button to game over menu
 - [ ] Add animation on wall collisions
 - [ ] Desaturate obstacle colors
 - [ ] Special item to clear all falling obstacles (?)
+- [ ] Replace game over menu buttons text with icons (?)
+
+##v1.0
 - [x] Different obstacle shapes
 
 #Screenshots
