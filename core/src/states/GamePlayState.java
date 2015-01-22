@@ -63,31 +63,32 @@ public class GamePlayState extends State implements InputProcessor {
 
 			switch (Gdx.app.getType()) {
 			case Android:
-				Iterator<Entry<Integer, Touch>> it = touches.entrySet()
-						.iterator();
+				Iterator<Entry<Integer, Touch>> it;
+
+				it = touches.entrySet().iterator();
 				while (it.hasNext()) {
 					Map.Entry<Integer, Touch> pairs = it.next();
 					Touch touch = pairs.getValue();
 
 					if (touch.touched) {
-						if (touch.position.x < Game.screenDimension.x / 2) {
+						if (touch.position.x < Game.screenDimension.x / 2)
 							movingLeft = true;
-							Gdx.app.debug("Touch", "move left");
-						} else {
+						else
 							movingRight = true;
-							Gdx.app.debug("Touch", "move right");
-						}
 					}
 				}
+
 				break;
 
 			case Desktop:
 				if (keys.contains(Keys.LEFT, true)
 						|| keys.contains(Keys.A, true))
 					movingLeft = true;
+
 				if (keys.contains(Keys.RIGHT, true)
 						|| keys.contains(Keys.D, true))
 					movingRight = true;
+
 				break;
 
 			default:
