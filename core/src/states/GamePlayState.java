@@ -27,6 +27,8 @@ public class GamePlayState extends State implements InputProcessor {
 	private int scoreFontSize;
 	private float elapsedTime;
 
+	private boolean gameOver;
+
 	@Override
 	public void create() {
 		obstacleSpawnProb = 1;
@@ -41,6 +43,8 @@ public class GamePlayState extends State implements InputProcessor {
 		for (int i = 0; i < 5; i++) {
 			touches.put(i, new Touch());
 		}
+
+		gameOver = false;
 	}
 
 	@Override
@@ -49,55 +53,64 @@ public class GamePlayState extends State implements InputProcessor {
 
 	@Override
 	public void update() {
-		elapsedTime += Gdx.graphics.getDeltaTime();
-		obstacleSpawnProb += 0.008;
+		if (gameOver)
+			StateManager.changeState(new GameOverState());
+		else {
+			elapsedTime += Gdx.graphics.getDeltaTime();
+			obstacleSpawnProb += 0.008;
 
-		boolean movingLeft = false, movingRight = false;
+			boolean movingLeft = false, movingRight = false;
 
-		switch (Gdx.app.getType()) {
-		case Android:
-			Iterator<Entry<Integer, Touch>> it = touches.entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry<Integer, Touch> pairs = it.next();
-				Touch touch = pairs.getValue();
+			switch (Gdx.app.getType()) {
+			case Android:
+				Iterator<Entry<Integer, Touch>> it = touches.entrySet()
+						.iterator();
+				while (it.hasNext()) {
+					Map.Entry<Integer, Touch> pairs = it.next();
+					Touch touch = pairs.getValue();
 
-				if (touch.touched) {
-					if (touch.position.x < Game.screenDimension.x / 2) {
-						movingLeft = true;
-						Gdx.app.debug("Touch", "move left");
-					} else {
-						movingRight = true;
-						Gdx.app.debug("Touch", "move right");
+					if (touch.touched) {
+						if (touch.position.x < Game.screenDimension.x / 2) {
+							movingLeft = true;
+							Gdx.app.debug("Touch", "move left");
+						} else {
+							movingRight = true;
+							Gdx.app.debug("Touch", "move right");
+						}
 					}
 				}
-			}
-			break;
-
-		case Desktop:
-			if (keys.contains(Keys.LEFT, true) || keys.contains(Keys.A, true))
-				movingLeft = true;
-			if (keys.contains(Keys.RIGHT, true) || keys.contains(Keys.D, true))
-				movingRight = true;
-			break;
-
-		default:
-			break;
-		}
-
-		Game.player.update(movingLeft, movingRight);
-
-		Game.updateObstacles();
-
-		if (MathUtils.random(100) <= obstacleSpawnProb)
-			Game.spawnObstacle();
-
-		// check player collision
-		for (Obstacle obstacle : Game.obstacles) {
-			if (Game.player.overlaps(obstacle)) {
-				Game.thumpSound.play();
-				Game.lastScore = elapsedTime;
-				StateManager.changeState(new GameOverState());
 				break;
+
+			case Desktop:
+				if (keys.contains(Keys.LEFT, true)
+						|| keys.contains(Keys.A, true))
+					movingLeft = true;
+				if (keys.contains(Keys.RIGHT, true)
+						|| keys.contains(Keys.D, true))
+					movingRight = true;
+				break;
+
+			default:
+				break;
+			}
+
+			Game.player.update(movingLeft, movingRight);
+
+			Game.updateObstacles();
+
+			if (MathUtils.random(100) <= obstacleSpawnProb)
+				Game.spawnObstacle();
+
+			// check player collision
+			for (Obstacle obstacle : Game.obstacles) {
+				if (Game.player.overlaps(obstacle)) {
+					Game.thumpSound.play();
+
+					Game.lastScore = elapsedTime;
+					gameOver = true;
+
+					break;
+				}
 			}
 		}
 	}
