@@ -12,6 +12,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
@@ -27,6 +28,9 @@ public class GameOverState extends State implements InputProcessor {
 	private final static Label buttonLbl = new Label("Main Menu",
 			(int) Math.round(0.05 * Game.screenDimension.x), 0.2f);
 
+	private Rectangle leaderboardBtn, achievementsBtn;
+	private Texture leaderboard, achievements;
+
 	private Touch touch;
 
 	private Color filterColor;
@@ -38,6 +42,18 @@ public class GameOverState extends State implements InputProcessor {
 		Gdx.input.setInputProcessor(this);
 
 		Game.udpateScore();
+
+		leaderboardBtn = new Rectangle(Game.screenDimension.x * 0.01f,
+				Game.screenDimension.x * 0.01f, Game.screenDimension.x * 0.1f,
+				Game.screenDimension.x * 0.1f);
+
+		achievementsBtn = new Rectangle(leaderboardBtn);
+		achievementsBtn.x += leaderboardBtn.x + leaderboardBtn.width;
+
+		leaderboard = new Texture(
+				Gdx.files.internal("images/games_leaderboards_white.png"));
+		achievements = new Texture(
+				Gdx.files.internal("images/games_achievements_white.png"));
 
 		touch = new Touch();
 
@@ -67,6 +83,8 @@ public class GameOverState extends State implements InputProcessor {
 		renderTitle();
 		renderScore();
 		renderButton();
+
+		renderGPGSButtons();
 	}
 
 	@Override
@@ -183,6 +201,19 @@ public class GameOverState extends State implements InputProcessor {
 		Game.shapeRenderer.end();
 	}
 
+	private void renderGPGSButtons() {
+		Game.spriteBatch.begin();
+
+		Game.spriteBatch.draw(leaderboard, leaderboardBtn.x, leaderboardBtn.y,
+				leaderboardBtn.width, leaderboardBtn.height, 0, 1, 1, 0);
+
+		Game.spriteBatch.draw(achievements, achievementsBtn.x,
+				achievementsBtn.y, achievementsBtn.width,
+				achievementsBtn.height, 0, 1, 1, 0);
+
+		Game.spriteBatch.end();
+	}
+
 	@Override
 	public boolean keyDown(int keycode) {
 		switch (Gdx.app.getType()) {
@@ -230,6 +261,12 @@ public class GameOverState extends State implements InputProcessor {
 
 		if (this.button.contains(screenX, Game.screenDimension.y - screenY))
 			StateManager.changeState(new MainMenuState());
+		else if (leaderboardBtn.contains(screenX, Game.screenDimension.y
+				- screenY))
+			Game.actionResolver.getLeaderboardGPGS();
+		else if (achievementsBtn.contains(screenX, Game.screenDimension.y
+				- screenY))
+			Game.actionResolver.getAchievementsGPGS();
 
 		return true;
 	}
