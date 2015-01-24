@@ -9,13 +9,15 @@ Another android game.
 
 #Changelog
 ##To do
-- [ ] Add leaderboards
 - [ ] Add instructions
 - [ ] Add try again button to game over menu
 - [ ] Add animation on wall collisions
 - [ ] Desaturate obstacle colors
 - [ ] Special item to clear all falling obstacles (?)
 - [ ] Replace game over menu buttons text with icons (?)
+
+##v2.0
+- [x] Add leaderboards and achievements
 
 ##v1.0
 - [x] Different obstacle shapes
