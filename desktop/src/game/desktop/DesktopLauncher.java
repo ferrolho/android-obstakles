@@ -24,6 +24,6 @@ public class DesktopLauncher {
 		// vSync
 		config.vSyncEnabled = true;
 
-		new LwjglApplication(new Game(), config);
+		new LwjglApplication(new Game(new ActionResolverDesktop()), config);
 	}
 }

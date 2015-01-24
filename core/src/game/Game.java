@@ -24,6 +24,8 @@ import entities.Player;
 
 public class Game extends ApplicationAdapter {
 
+	public static ActionResolver actionResolver;
+
 	public static Vector2 screenDimension;
 	public static float GRAVITY;
 
@@ -36,13 +38,18 @@ public class Game extends ApplicationAdapter {
 
 	private final static String PREFERENCES_ID = "scores";
 	private final static String BEST_ID = "best";
+	private final static String BEST_SUBMITTED_ID = "best-submitted";
 
-	public static float lastScore, bestScore;
+	public static float lastScore, bestScore, bestScoreSubmitted;
 
 	public static Player player;
 
 	public static Array<Color> obstacleColors;
 	public static Array<Obstacle> obstacles;
+
+	public Game(ActionResolver actionResolver) {
+		Game.actionResolver = actionResolver;
+	}
 
 	@Override
 	public void create() {
@@ -119,11 +126,21 @@ public class Game extends ApplicationAdapter {
 	public static void udpateScore() {
 		Preferences prefs = Gdx.app.getPreferences(PREFERENCES_ID);
 		bestScore = prefs.getFloat(BEST_ID, 0);
+		bestScoreSubmitted = prefs.getFloat(BEST_SUBMITTED_ID, 0);
 
 		if (lastScore > bestScore) {
 			bestScore = lastScore;
 
 			prefs.putFloat(BEST_ID, bestScore);
+			prefs.flush();
+		}
+
+		if (actionResolver.getSignedInGPGS() && bestScoreSubmitted < bestScore) {
+			actionResolver.submitScoreGPGS(bestScore);
+
+			bestScoreSubmitted = bestScore;
+
+			prefs.putFloat(BEST_SUBMITTED_ID, bestScoreSubmitted);
 			prefs.flush();
 		}
 	}

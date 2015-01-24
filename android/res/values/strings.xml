@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="app_name">Obstakles</string>
+    <string name="app_id">810935051276</string>
+    <string name="achievement_rookie" tools:ignore="TypographyDashes">CgkIjMj7-8wXEAIQAQ</string>
+    <string name="achievement_apprentice" tools:ignore="TypographyDashes">CgkIjMj7-8wXEAIQAg</string>
+    <string name="achievement_expert" tools:ignore="TypographyDashes">CgkIjMj7-8wXEAIQAw</string>
+    <string name="achievement_master" tools:ignore="TypographyDashes">CgkIjMj7-8wXEAIQBA</string>
+    <string name="achievement_legend" tools:ignore="TypographyDashes">CgkIjMj7-8wXEAIQBQ</string>
+    <string name="leaderboard_top_survivors" tools:ignore="TypographyDashes">CgkIjMj7-8wXEAIQBg</string>
 
 </resources>
