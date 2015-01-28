@@ -104,6 +104,7 @@ public class GamePlayState extends State implements InputProcessor {
 
 			// check player collision
 			for (Obstacle obstacle : Game.obstacles) {
+				// skip obstacles that are clearly not colliding
 				if (Obstacle.spawnHeight + obstacle.distanceTraveled.y
 						- Obstacle.maxDistToCenter > Game.player.y
 						+ Game.player.height)
