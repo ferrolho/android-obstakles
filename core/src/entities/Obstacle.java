@@ -17,6 +17,12 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Obstacle extends Polygon {
 
+	public final static float spawnHeight = Game.screenDimension.y + 0.1f
+			* Game.screenDimension.x;
+
+	public final static float minDistToCenter = 0.02f * Game.screenDimension.x;
+	public final static float maxDistToCenter = 0.1f * Game.screenDimension.x;
+
 	private final static float maxRotationSpeed = 5;
 
 	private PolygonSprite polygonSprite;
@@ -24,7 +30,7 @@ public class Obstacle extends Polygon {
 	private short[] triangles;
 	private float[] outlineVertices;
 
-	public Vector2 position, velocity;
+	public Vector2 centerSpawn, distanceTraveled, velocity;
 	public float rotation, rotationSpeed;
 	public Color color;
 
@@ -34,7 +40,7 @@ public class Obstacle extends Polygon {
 		rotation = 0;
 		rotationSpeed = MathUtils.random(-maxRotationSpeed, maxRotationSpeed);
 
-		position = new Vector2();
+		distanceTraveled = new Vector2();
 		velocity = new Vector2(0, -0.5f * Math.abs(rotationSpeed));
 
 		Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -49,8 +55,8 @@ public class Obstacle extends Polygon {
 
 	private void generateGeometry() {
 		// randomly position obstacle center
-		Vector2 center = new Vector2(MathUtils.random(Game.screenDimension.x),
-				Game.screenDimension.y + 0.1f * Game.screenDimension.x);
+		centerSpawn = new Vector2(MathUtils.random(Game.screenDimension.x),
+				spawnHeight);
 
 		// randomly pick obstacle number of vertices
 		int numVertices = MathUtils.random(4, 7);
@@ -62,19 +68,18 @@ public class Obstacle extends Polygon {
 		float[] vertices = new float[2 + numVertices * 2];
 
 		// save center to vertices array
-		vertices[0] = center.x;
-		vertices[1] = center.y;
+		vertices[0] = centerSpawn.x;
+		vertices[1] = centerSpawn.y;
 
 		// randomly place each vertex inside its own sector
 		for (int i = 0; i < numVertices; i++) {
 			float vertexAngle = MathUtils.random(sectorAngle) + i * sectorAngle;
 
-			float distToCenter = MathUtils.random(
-					0.02f * Game.screenDimension.x,
-					0.1f * Game.screenDimension.x);
+			float distToCenter = MathUtils.random(minDistToCenter,
+					maxDistToCenter);
 
 			// build point coordinates
-			Vector2 point = new Vector2(center.x, center.y);
+			Vector2 point = new Vector2(centerSpawn.x, centerSpawn.y);
 			point.x += MathUtils.cos(MathUtils.degreesToRadians * vertexAngle)
 					* distToCenter;
 			point.y += MathUtils.sin(MathUtils.degreesToRadians * vertexAngle)
@@ -85,7 +90,7 @@ public class Obstacle extends Polygon {
 			vertices[(1 + i) * 2 + 1] = point.y;
 		}
 
-		setOrigin(center.x, center.y);
+		setOrigin(centerSpawn.x, centerSpawn.y);
 		setVertices(vertices);
 
 		// computing triangles required to fill shape with color
@@ -97,13 +102,15 @@ public class Obstacle extends Polygon {
 		}
 	}
 
-	public void update() {
+	public void update(float deltaTime) {
+		float framesElapsed = deltaTime / Game.SPF;
+
 		velocity.y -= 0.1 * Game.GRAVITY;
-		position.y += velocity.y;
+		distanceTraveled.y += velocity.y * framesElapsed;
 
-		rotation = (rotation + rotationSpeed) % 360;
+		rotation = (rotation + rotationSpeed * framesElapsed) % 360;
 
-		setPosition(0, position.y);
+		setPosition(0, distanceTraveled.y);
 		setRotation(rotation);
 
 		updatePolyRegAndOutlineVertices();

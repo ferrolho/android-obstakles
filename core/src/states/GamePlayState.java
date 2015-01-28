@@ -52,12 +52,12 @@ public class GamePlayState extends State implements InputProcessor {
 	}
 
 	@Override
-	public void update() {
+	public void update(float deltaTime) {
 		if (gameOver)
 			StateManager.changeState(new GameOverState());
 		else {
-			elapsedTime += Gdx.graphics.getDeltaTime();
-			obstacleSpawnProb += 0.008;
+			elapsedTime += deltaTime;
+			obstacleSpawnProb += 0.008 * deltaTime / Game.SPF;
 
 			boolean movingLeft = false, movingRight = false;
 
@@ -95,15 +95,25 @@ public class GamePlayState extends State implements InputProcessor {
 				break;
 			}
 
-			Game.player.update(movingLeft, movingRight);
+			Game.player.update(deltaTime, movingLeft, movingRight);
 
-			Game.updateObstacles();
+			Game.updateObstacles(deltaTime);
 
 			if (MathUtils.random(100) <= obstacleSpawnProb)
 				Game.spawnObstacle();
 
 			// check player collision
 			for (Obstacle obstacle : Game.obstacles) {
+				if (Obstacle.spawnHeight + obstacle.distanceTraveled.y
+						- Obstacle.maxDistToCenter > Game.player.y
+						+ Game.player.height)
+					continue;
+				else if (obstacle.centerSpawn.x + Obstacle.maxDistToCenter < Game.player.x)
+					continue;
+				else if (obstacle.centerSpawn.x - Obstacle.maxDistToCenter > Game.player.x
+						+ Game.player.width)
+					continue;
+
 				if (Game.player.overlaps(obstacle)) {
 					Game.thumpSound.play();
 

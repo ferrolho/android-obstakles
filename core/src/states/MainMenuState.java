@@ -59,8 +59,8 @@ public class MainMenuState extends State implements InputProcessor {
 	}
 
 	@Override
-	public void update() {
-		Game.updateObstacles();
+	public void update(float deltaTime) {
+		Game.updateObstacles(deltaTime);
 
 		// update falling objects
 		if (MathUtils.random(100) <= obstacleSpawnProb)

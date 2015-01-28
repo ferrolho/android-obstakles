@@ -32,7 +32,7 @@ public class Player extends Rectangle {
 		topSpeed = 0.02f * Game.screenDimension.x;
 	}
 
-	public void update(boolean movingLeft, boolean movingRight) {
+	public void update(float deltaTime, boolean movingLeft, boolean movingRight) {
 		// not touching
 		if (!movingLeft && !movingRight && velocity.x != 0) {
 			if (velocity.x > 0) {
@@ -64,17 +64,21 @@ public class Player extends Rectangle {
 			}
 		}
 
+		float framesElapsed = deltaTime / Game.SPF;
+
 		// update x
-		x += velocity.x;
+		x += velocity.x * framesElapsed;
 
 		// update y
 		velocity.y -= Game.GRAVITY;
-		y += velocity.y;
+		y += velocity.y * framesElapsed;
 
-		updateCollisions();
+		updateCollisions(deltaTime);
 	}
 
-	private void updateCollisions() {
+	private void updateCollisions(float deltaTime) {
+		float framesElapsed = deltaTime / Game.SPF;
+
 		// ground collision
 		if (y < 0) {
 			velocity.y = 0;
@@ -86,16 +90,16 @@ public class Player extends Rectangle {
 			velocity.x = 2 * topSpeed;
 			velocity.y = 10 * Game.GRAVITY;
 
-			x += velocity.x;
-			y += velocity.y;
+			x += velocity.x * framesElapsed;
+			y += velocity.y * framesElapsed;
 
 			Game.bumpSound.play();
 		} else if (x + width > Game.screenDimension.x) {
 			velocity.x = -2 * topSpeed;
 			velocity.y = 10 * Game.GRAVITY;
 
-			x += velocity.x;
-			y += velocity.y;
+			x += velocity.x * framesElapsed;
+			y += velocity.y * framesElapsed;
 
 			Game.bumpSound.play();
 		}

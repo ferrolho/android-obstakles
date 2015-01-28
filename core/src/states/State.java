@@ -6,7 +6,7 @@ public abstract class State {
 
 	public abstract void resize(int width, int height);
 
-	public abstract void update();
+	public abstract void update(float deltaTime);
 
 	public abstract void render();
 

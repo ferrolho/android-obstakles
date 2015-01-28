@@ -26,6 +26,9 @@ public class Game extends ApplicationAdapter {
 
 	public static ActionResolver actionResolver;
 
+	public static final int FPS = 60;
+	public static final float SPF = 1.0f / FPS;
+
 	public static Vector2 screenDimension;
 	public static float GRAVITY;
 
@@ -142,7 +145,7 @@ public class Game extends ApplicationAdapter {
 			actionResolver.submitScoreGPGS(lastScore);
 
 			// if local best is better than online best
-			if (bestScoreSubmitted < bestScore) {
+			if (bestScore > bestScoreSubmitted) {
 				// submit local best score
 				actionResolver.submitScoreGPGS(bestScore);
 
@@ -175,15 +178,15 @@ public class Game extends ApplicationAdapter {
 		obstacles.add(new Obstacle());
 	}
 
-	public static void updateObstacles() {
+	public static void updateObstacles(float deltaTime) {
 		Iterator<Obstacle> iterator = obstacles.iterator();
 
 		while (iterator.hasNext()) {
 			Obstacle obstacle = iterator.next();
 
-			obstacle.update();
+			obstacle.update(deltaTime);
 
-			if (Math.abs(obstacle.position.y) > screenDimension.y + 0.2f
+			if (Math.abs(obstacle.distanceTraveled.y) > screenDimension.y + 0.2f
 					* Game.screenDimension.x)
 				iterator.remove();
 		}

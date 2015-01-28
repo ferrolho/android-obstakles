@@ -67,7 +67,7 @@ public class GameOverState extends State implements InputProcessor {
 	}
 
 	@Override
-	public void update() {
+	public void update(float deltaTime) {
 	}
 
 	@Override
