@@ -16,11 +16,16 @@ Another android game.
 - [ ] Special item to clear all falling obstacles (?)
 - [ ] Replace game over menu buttons text with icons (?)
 
+##v2.1
+- Bug fix in leaderboards
+- Fixed different update rate on different devices
+- Improved collisions detection speed
+
 ##v2.0
-- [x] Add leaderboards and achievements
+- Add leaderboards and achievements
 
 ##v1.0
-- [x] Different obstacle shapes
+- Different obstacle shapes
 
 #Screenshots
 ###Game as was on 18-01-2015
