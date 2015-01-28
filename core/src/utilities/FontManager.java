@@ -18,7 +18,7 @@ public class FontManager {
 
 	public FontManager() {
 		generator = new FreeTypeFontGenerator(
-				Gdx.files.internal("fonts/verdana.ttf"));
+				Gdx.files.internal("fonts/helvetica-neue-ultra-light.ttf"));
 		param = new FreeTypeFontParameter();
 		fonts = new HashMap<Integer, BitmapFont>();
 	}
