@@ -128,6 +128,7 @@ public class Game extends ApplicationAdapter {
 		bestScore = prefs.getFloat(BEST_ID, 0);
 		bestScoreSubmitted = prefs.getFloat(BEST_SUBMITTED_ID, 0);
 
+		// update local best score
 		if (lastScore > bestScore) {
 			bestScore = lastScore;
 
@@ -135,13 +136,20 @@ public class Game extends ApplicationAdapter {
 			prefs.flush();
 		}
 
-		if (actionResolver.getSignedInGPGS() && bestScoreSubmitted < bestScore) {
-			actionResolver.submitScoreGPGS(bestScore);
+		// if signed in game services
+		if (actionResolver.getSignedInGPGS()) {
+			// submit last score
+			actionResolver.submitScoreGPGS(lastScore);
 
-			bestScoreSubmitted = bestScore;
+			// if local best is better than online best
+			if (bestScoreSubmitted < bestScore) {
+				// submit local best score
+				actionResolver.submitScoreGPGS(bestScore);
 
-			prefs.putFloat(BEST_SUBMITTED_ID, bestScoreSubmitted);
-			prefs.flush();
+				bestScoreSubmitted = bestScore;
+				prefs.putFloat(BEST_SUBMITTED_ID, bestScoreSubmitted);
+				prefs.flush();
+			}
 		}
 	}
 
