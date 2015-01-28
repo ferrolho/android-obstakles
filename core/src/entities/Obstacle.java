@@ -102,13 +102,11 @@ public class Obstacle extends Polygon {
 		}
 	}
 
-	public void update(float deltaTime) {
-		float framesElapsed = deltaTime / Game.SPF;
-
+	public void update() {
 		velocity.y -= 0.1 * Game.GRAVITY;
-		distanceTraveled.y += velocity.y * framesElapsed;
+		distanceTraveled.y += velocity.y;
 
-		rotation = (rotation + rotationSpeed * framesElapsed) % 360;
+		rotation = (rotation + rotationSpeed) % 360;
 
 		setPosition(0, distanceTraveled.y);
 		setRotation(rotation);

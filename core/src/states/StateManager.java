@@ -1,7 +1,5 @@
 package states;
 
-import com.badlogic.gdx.Gdx;
-
 public class StateManager {
 
 	private static State currentState;
@@ -21,7 +19,7 @@ public class StateManager {
 
 	public static void updateState() {
 		if (currentState != null)
-			currentState.update(Gdx.graphics.getDeltaTime());
+			currentState.update();
 	}
 
 	public static void renderState() {

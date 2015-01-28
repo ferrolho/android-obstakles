@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -28,6 +29,7 @@ public class Game extends ApplicationAdapter {
 
 	public static final int FPS = 60;
 	public static final float SPF = 1.0f / FPS;
+	public static float timeAccumulator;
 
 	public static Vector2 screenDimension;
 	public static float GRAVITY;
@@ -72,6 +74,8 @@ public class Game extends ApplicationAdapter {
 			break;
 		}
 
+		timeAccumulator = 0;
+
 		updateScreenDimension();
 		GRAVITY = 0.002f * screenDimension.x;
 
@@ -108,7 +112,13 @@ public class Game extends ApplicationAdapter {
 
 	@Override
 	public void render() {
-		StateManager.updateState();
+		timeAccumulator += Gdx.graphics.getDeltaTime();
+
+		int elapsedFrames = MathUtils.floor(timeAccumulator / SPF);
+		timeAccumulator %= SPF;
+
+		for (int i = 0; i < elapsedFrames; i++)
+			StateManager.updateState();
 
 		StateManager.renderState();
 	}
@@ -178,16 +188,16 @@ public class Game extends ApplicationAdapter {
 		obstacles.add(new Obstacle());
 	}
 
-	public static void updateObstacles(float deltaTime) {
+	public static void updateObstacles() {
 		Iterator<Obstacle> iterator = obstacles.iterator();
 
 		while (iterator.hasNext()) {
 			Obstacle obstacle = iterator.next();
 
-			obstacle.update(deltaTime);
+			obstacle.update();
 
-			if (Math.abs(obstacle.distanceTraveled.y) > screenDimension.y + 0.2f
-					* Game.screenDimension.x)
+			if (Math.abs(obstacle.distanceTraveled.y) > screenDimension.y
+					+ 0.2f * Game.screenDimension.x)
 				iterator.remove();
 		}
 	}
