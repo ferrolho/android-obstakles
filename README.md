@@ -17,15 +17,15 @@ Another android game.
 - [ ] Replace game over menu buttons text with icons (?)
 
 ##v2.1
-- Bug fix in leaderboards
+- Fixed bug in leaderboards
 - Fixed different update rate on different devices
 - Improved collisions detection speed
 
 ##v2.0
-- Add leaderboards and achievements
+- Added leaderboards and achievements
 
 ##v1.0
-- Different obstacle shapes
+- Added obstacles with different shapes
 
 #Screenshots
 ###Game as was on 18-01-2015
