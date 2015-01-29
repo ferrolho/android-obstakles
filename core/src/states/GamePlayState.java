@@ -22,6 +22,8 @@ import com.badlogic.gdx.utils.Array;
 
 public class GamePlayState extends State implements InputProcessor {
 
+	public float timeAccumulator;
+
 	private float obstacleSpawnProb;
 
 	private int scoreFontSize;
@@ -31,9 +33,11 @@ public class GamePlayState extends State implements InputProcessor {
 
 	@Override
 	public void create() {
+		timeAccumulator = 0;
+
 		obstacleSpawnProb = 1;
 
-		scoreFontSize = (int) (0.05 * Game.screenDimension.x);
+		scoreFontSize = (int) (0.08 * Game.screenDimension.x);
 		elapsedTime = 0;
 
 		Game.player = new Player(Color.BLUE);
@@ -53,75 +57,83 @@ public class GamePlayState extends State implements InputProcessor {
 
 	@Override
 	public void update() {
-		if (gameOver)
-			StateManager.changeState(new GameOverState());
-		else {
-			elapsedTime += Gdx.graphics.getDeltaTime();
-			obstacleSpawnProb += 0.008;
+		elapsedTime += Gdx.graphics.getDeltaTime();
 
-			boolean movingLeft = false, movingRight = false;
+		timeAccumulator += Gdx.graphics.getDeltaTime();
 
-			switch (Gdx.app.getType()) {
-			case Android:
-				Iterator<Entry<Integer, Touch>> it;
+		int elapsedFrames = MathUtils.floor(timeAccumulator / Game.SPF);
+		timeAccumulator %= Game.SPF;
 
-				it = touches.entrySet().iterator();
-				while (it.hasNext()) {
-					Map.Entry<Integer, Touch> pairs = it.next();
-					Touch touch = pairs.getValue();
+		for (int i = 0; i < elapsedFrames; i++) {
+			if (gameOver)
+				StateManager.changeState(new GameOverState());
+			else {
+				obstacleSpawnProb += 0.008;
 
-					if (touch.touched) {
-						if (touch.position.x < Game.screenDimension.x / 2)
-							movingLeft = true;
-						else
-							movingRight = true;
+				boolean movingLeft = false, movingRight = false;
+
+				switch (Gdx.app.getType()) {
+				case Android:
+					Iterator<Entry<Integer, Touch>> it;
+
+					it = touches.entrySet().iterator();
+					while (it.hasNext()) {
+						Map.Entry<Integer, Touch> pairs = it.next();
+						Touch touch = pairs.getValue();
+
+						if (touch.touched) {
+							if (touch.position.x < Game.screenDimension.x / 2)
+								movingLeft = true;
+							else
+								movingRight = true;
+						}
 					}
-				}
-
-				break;
-
-			case Desktop:
-				if (keys.contains(Keys.LEFT, true)
-						|| keys.contains(Keys.A, true))
-					movingLeft = true;
-
-				if (keys.contains(Keys.RIGHT, true)
-						|| keys.contains(Keys.D, true))
-					movingRight = true;
-
-				break;
-
-			default:
-				break;
-			}
-
-			Game.player.update(movingLeft, movingRight);
-
-			Game.updateObstacles();
-
-			if (MathUtils.random(100) <= obstacleSpawnProb)
-				Game.spawnObstacle();
-
-			// check player collision
-			for (Obstacle obstacle : Game.obstacles) {
-				// skip obstacles that are clearly not colliding
-				if (Obstacle.spawnHeight + obstacle.distanceTraveled.y
-						- Obstacle.maxDistToCenter > Game.player.y
-						+ Game.player.height)
-					continue;
-				else if (obstacle.centerSpawn.x + Obstacle.maxDistToCenter < Game.player.x)
-					continue;
-				else if (obstacle.centerSpawn.x - Obstacle.maxDistToCenter > Game.player.x
-						+ Game.player.width)
-					continue;
-
-				if (Game.player.overlaps(obstacle)) {
-					Game.thumpSound.play();
-
-					Game.lastScore = elapsedTime;
-					gameOver = true;
 
 					break;
+
+				case Desktop:
+					if (keys.contains(Keys.LEFT, true)
+							|| keys.contains(Keys.A, true))
+						movingLeft = true;
+
+					if (keys.contains(Keys.RIGHT, true)
+							|| keys.contains(Keys.D, true))
+						movingRight = true;
+
+					break;
+
+				default:
+					break;
+				}
+
+				Game.player.update(movingLeft, movingRight);
+
+				Game.updateObstacles();
+
+				if (MathUtils.random(100) <= obstacleSpawnProb)
+					Game.spawnObstacle();
+
+				// check player collision
+				for (Obstacle obstacle : Game.obstacles) {
+					// skip obstacles that are clearly not colliding
+					if (Obstacle.spawnHeight + obstacle.distanceTraveled.y
+							- Obstacle.maxDistToCenter > Game.player.y
+							+ Game.player.height)
+						continue;
+					else if (obstacle.centerSpawn.x + Obstacle.maxDistToCenter < Game.player.x)
+						continue;
+					else if (obstacle.centerSpawn.x - Obstacle.maxDistToCenter > Game.player.x
+							+ Game.player.width)
+						continue;
+
+					if (Game.player.overlaps(obstacle)) {
+						Game.thumpSound.play();
+
+						Game.lastScore = elapsedTime;
+						gameOver = true;
+
+						break;
+					}
 				}
 			}
 		}
@@ -138,25 +150,25 @@ public class GamePlayState extends State implements InputProcessor {
 		renderScore();
 	}
 
+	@Override
+	public void dispose() {
+	}
+
 	private void renderScore() {
 		BitmapFont font = Game.fontManager.getFont(scoreFontSize);
 
 		DecimalFormat f = new DecimalFormat("##0.00");
 		String elapsedTimeStr = f.format(elapsedTime);
 
-		float x = Game.screenDimension.x - 1.1f
-				* font.getBounds(elapsedTimeStr).width;
-		float y = Game.screenDimension.y - 0.3f
-				* font.getBounds(elapsedTimeStr).height;
+		int x = (int) (Game.screenDimension.x - 1.1f * font
+				.getBounds(elapsedTimeStr).width);
+		int y = (int) (Game.screenDimension.y - 0.3f * font
+				.getBounds(elapsedTimeStr).height);
 
 		Game.spriteBatch.begin();
 		font.setColor(0, 0, 0, 1);
 		font.draw(Game.spriteBatch, elapsedTimeStr, x, y);
 		Game.spriteBatch.end();
-	}
-
-	@Override
-	public void dispose() {
 	}
 
 	private Map<Integer, Touch> touches = new HashMap<Integer, Touch>();

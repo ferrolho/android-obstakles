@@ -19,23 +19,30 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class GameOverState extends State implements InputProcessor {
 
-	private final static Label gameOverLbl = new Label("Game Over",
-			(int) Math.round(0.1 * Game.screenDimension.x), 0.8f);
+	private final Label scoreLbl;
+	private final float lastScoreInfoX;
+	private final float bestScoreInfoX;
 
-	private final static Label scoreLbl = new Label("",
-			(int) Math.round(0.06 * Game.screenDimension.x), 0.6f);
+	private Color fontColor;
+	private BitmapFont labelsFont, scoresFont, smallLabelsFont;
+	private String lastScoreLbl, bestScoreLbl, lastScoreStr, bestScoreStr;
+	private int lastLblX, lastScoreX, bestLblX, bestScoreX, labelsY, scoresY;
 
-	private final static Label buttonLbl = new Label("Main Menu",
-			(int) Math.round(0.05 * Game.screenDimension.x), 0.2f);
-
-	private Rectangle leaderboardBtn, achievementsBtn;
-	private Texture leaderboard, achievements;
+	private float buttonsY;
+	private Rectangle retryBtn, leaderboardBtn, achievementsBtn;
+	private Texture retryText, leaderboardText, achievementsText;
+	private String retryLbl, leaderboardsLbl, achievementsLbl;
 
 	private Touch touch;
 
 	private Color filterColor;
 
-	private Rectangle button;
+	public GameOverState() {
+		scoreLbl = new Label("",
+				(int) Math.round(0.04 * Game.screenDimension.x), 0.85f);
+		lastScoreInfoX = Game.screenDimension.x / 3.0f;
+		bestScoreInfoX = Game.screenDimension.x * 2.0f / 3.0f;
+	}
 
 	@Override
 	public void create() {
@@ -43,23 +50,36 @@ public class GameOverState extends State implements InputProcessor {
 
 		Game.udpateScore();
 
-		leaderboardBtn = new Rectangle(Game.screenDimension.x * 0.01f,
-				Game.screenDimension.x * 0.01f, Game.screenDimension.x * 0.1f,
-				Game.screenDimension.x * 0.1f);
+		fontColor = Color.DARK_GRAY;
+
+		prepareScores();
+
+		buttonsY = 0.2f * Game.screenDimension.y;
+		float bigBtnSize = 0.2f;
+		float smallBtnSize = bigBtnSize - 0.05f;
+
+		leaderboardBtn = new Rectangle(Game.screenDimension.x / 8.0f, buttonsY,
+				Game.screenDimension.x * smallBtnSize, Game.screenDimension.x
+						* smallBtnSize);
 
 		achievementsBtn = new Rectangle(leaderboardBtn);
-		achievementsBtn.x += leaderboardBtn.x + leaderboardBtn.width;
+		achievementsBtn.x = Game.screenDimension.x * 7.0f / 8.0f
+				- leaderboardBtn.width;
 
-		leaderboard = new Texture(
-				Gdx.files.internal("images/games_leaderboards_white.png"));
-		achievements = new Texture(
-				Gdx.files.internal("images/games_achievements_white.png"));
+		retryBtn = new Rectangle(Game.screenDimension.x / 2, buttonsY,
+				Game.screenDimension.x * bigBtnSize, Game.screenDimension.x
+						* bigBtnSize);
+		retryBtn.x -= retryBtn.width / 2;
+
+		leaderboardText = new Texture(
+				Gdx.files.internal("images/leaderboards-icon.png"));
+		achievementsText = new Texture(
+				Gdx.files.internal("images/achievements-icon.png"));
+		retryText = new Texture(Gdx.files.internal("images/retry-icon.png"));
 
 		touch = new Touch();
 
-		filterColor = new Color(0, 0, 0, 0.3f);
-
-		createReturnToMainMenuButton();
+		filterColor = new Color(1, 1, 1, 0.7f);
 	}
 
 	@Override
@@ -80,28 +100,42 @@ public class GameOverState extends State implements InputProcessor {
 
 		renderFilter();
 
-		renderTitle();
 		renderScore();
-		renderButton();
 
-		renderGPGSButtons();
+		renderButtons();
 	}
 
 	@Override
 	public void dispose() {
 	}
 
-	private void createReturnToMainMenuButton() {
-		BitmapFont font = Game.fontManager.getFont(buttonLbl.size);
+	private void prepareScores() {
+		labelsFont = Game.fontManager.getFont(scoreLbl.size);
+		labelsFont.setColor(fontColor);
 
-		float w = 1.2f * font.getBounds(buttonLbl.text).width;
-		float h = font.getBounds(buttonLbl.text).height + 0.2f
-				* font.getBounds(buttonLbl.text).width;
+		scoresFont = Game.fontManager.getFont((int) (2.5 * scoreLbl.size));
+		scoresFont.setColor(fontColor);
 
-		float x = Game.screenDimension.x / 2 - w / 2;
-		float y = buttonLbl.position * Game.screenDimension.y - h / 2;
+		smallLabelsFont = Game.fontManager.getFont((int) (0.8 * scoreLbl.size));
+		smallLabelsFont.setColor(fontColor);
 
-		button = new Rectangle(x, y, w, h);
+		lastScoreLbl = "SCORE";
+		bestScoreLbl = "BEST";
+
+		DecimalFormat f = new DecimalFormat("##0.00");
+		lastScoreStr = f.format(Game.lastScore);
+		bestScoreStr = f.format(Game.bestScore);
+
+		lastLblX = (int) (lastScoreInfoX - labelsFont.getBounds(lastScoreLbl).width / 2);
+		lastScoreX = (int) (lastScoreInfoX - scoresFont.getBounds(lastScoreStr).width / 2);
+
+		bestLblX = (int) (bestScoreInfoX - labelsFont.getBounds(bestScoreLbl).width / 2);
+		bestScoreX = (int) (bestScoreInfoX - scoresFont.getBounds(bestScoreStr).width / 2);
+
+		labelsY = (int) (scoreLbl.position * Game.screenDimension.y + labelsFont
+				.getBounds(lastScoreLbl).height / 2);
+		scoresY = (int) (scoreLbl.position * Game.screenDimension.y - labelsFont
+				.getBounds(lastScoreLbl).height);
 	}
 
 	private void renderFilter() {
@@ -119,97 +153,78 @@ public class GameOverState extends State implements InputProcessor {
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 
-	private void renderTitle() {
-		BitmapFont font = Game.fontManager.getFont(gameOverLbl.size);
-
-		float x = Game.screenDimension.x / 2
-				- font.getBounds(gameOverLbl.text).width / 2;
-		float y = gameOverLbl.position * Game.screenDimension.y
-				+ font.getBounds(gameOverLbl.text).height / 2;
-
-		Game.spriteBatch.begin();
-
-		font.setColor(Color.WHITE);
-		font.draw(Game.spriteBatch, gameOverLbl.text, x, y);
-
-		Game.spriteBatch.end();
-	}
-
 	private void renderScore() {
-		BitmapFont font = Game.fontManager.getFont(scoreLbl.size);
-
-		DecimalFormat f = new DecimalFormat("##0.00");
-		String lastScoreStr = "Score: " + f.format(Game.lastScore);
-		String bestScoreStr = "Best: " + f.format(Game.bestScore);
-
-		float lastX = Game.screenDimension.x / 2
-				- font.getBounds(lastScoreStr).width / 2;
-		float lastY = scoreLbl.position * Game.screenDimension.y
-				+ font.getBounds(lastScoreStr).height / 2;
-
-		float bestX = Game.screenDimension.x / 2
-				- font.getBounds(bestScoreStr).width / 2;
-		float bestY = scoreLbl.position * Game.screenDimension.y
-				+ font.getBounds(bestScoreStr).height / 2 - 2.5f
-				* font.getBounds(lastScoreStr).height;
-
 		Game.spriteBatch.begin();
 
 		if (Game.lastScore == Game.bestScore)
-			font.setColor(0, 1, 0, 1);
+			scoresFont.setColor(0, 153f / 255f, 0, 1); // dark green
 		else
-			font.setColor(Color.WHITE);
+			scoresFont.setColor(fontColor);
 
-		font.draw(Game.spriteBatch, lastScoreStr, lastX, lastY);
-		font.draw(Game.spriteBatch, bestScoreStr, bestX, bestY);
+		labelsFont.draw(Game.spriteBatch, lastScoreLbl, lastLblX, labelsY);
+		scoresFont.draw(Game.spriteBatch, lastScoreStr, lastScoreX, scoresY);
+
+		labelsFont.draw(Game.spriteBatch, bestScoreLbl, bestLblX, labelsY);
+		scoresFont.draw(Game.spriteBatch, bestScoreStr, bestScoreX, scoresY);
 
 		Game.spriteBatch.end();
 	}
 
-	private void renderButton() {
-		// button background
+	private void renderButtons() {
+		retryLbl = "RETRY";
+		leaderboardsLbl = "LEADERBOARDS";
+		achievementsLbl = "ACHIEVEMENTS";
+
+		Rectangle rect;
+		String lbl;
+
 		Game.shapeRenderer.begin(ShapeType.Filled);
+		Game.shapeRenderer.setColor(0.96f, 0.96f, 0.96f, 1);
 
-		Game.shapeRenderer.setColor(Color.WHITE);
-		Game.shapeRenderer
-				.rect(button.x, button.y, button.width, button.height);
+		rect = retryBtn;
+		Game.shapeRenderer.circle(rect.x + rect.width / 2, rect.y + rect.height
+				/ 2, rect.width / 2);
 
-		Game.shapeRenderer.end();
+		rect = leaderboardBtn;
+		Game.shapeRenderer.circle(rect.x + rect.width / 2, rect.y + rect.height
+				/ 2, rect.width / 2);
 
-		// button text
-		BitmapFont font = Game.fontManager.getFont(buttonLbl.size);
-
-		float x = Game.screenDimension.x / 2
-				- font.getBounds(buttonLbl.text).width / 2;
-		float y = buttonLbl.position * Game.screenDimension.y
-				+ font.getBounds(buttonLbl.text).height / 2;
-
-		Game.spriteBatch.begin();
-
-		font.setColor(0, 0, 0, 1);
-		font.draw(Game.spriteBatch, buttonLbl.text, x, y);
-
-		Game.spriteBatch.end();
-
-		// button borders
-		Game.shapeRenderer.begin(ShapeType.Line);
-
-		Game.shapeRenderer.setColor(Color.BLACK);
-		Game.shapeRenderer
-				.rect(button.x, button.y, button.width, button.height);
+		rect = achievementsBtn;
+		Game.shapeRenderer.circle(rect.x + rect.width / 2, rect.y + rect.height
+				/ 2, rect.width / 2);
 
 		Game.shapeRenderer.end();
-	}
 
-	private void renderGPGSButtons() {
 		Game.spriteBatch.begin();
+		int margin = (int) (0.04 * Game.screenDimension.x);
 
-		Game.spriteBatch.draw(leaderboard, leaderboardBtn.x, leaderboardBtn.y,
-				leaderboardBtn.width, leaderboardBtn.height, 0, 1, 1, 0);
+		rect = retryBtn;
+		lbl = retryLbl;
+		Game.spriteBatch.draw(retryText, rect.x + margin, rect.y + margin,
+				rect.width - 2 * margin, rect.height - 2 * margin, 0, 1, 1, 0);
+		smallLabelsFont.draw(Game.spriteBatch, lbl, rect.x + rect.width / 2
+				- smallLabelsFont.getBounds(lbl).width / 2, rect.y
+				- smallLabelsFont.getBounds(lbl).height / 2);
 
-		Game.spriteBatch.draw(achievements, achievementsBtn.x,
-				achievementsBtn.y, achievementsBtn.width,
-				achievementsBtn.height, 0, 1, 1, 0);
+		margin *= 0.75f;
+
+		rect = leaderboardBtn;
+		lbl = leaderboardsLbl;
+		Game.spriteBatch.draw(leaderboardText, rect.x + margin,
+				rect.y + margin, rect.width - 2 * margin, rect.height - 2
+						* margin, 0, 1, 1, 0);
+		smallLabelsFont.draw(Game.spriteBatch, lbl, rect.x + rect.width / 2
+				- smallLabelsFont.getBounds(lbl).width / 2, rect.y
+				- smallLabelsFont.getBounds(lbl).height / 2);
+
+		rect = achievementsBtn;
+		lbl = achievementsLbl;
+		Game.spriteBatch.draw(achievementsText, rect.x + margin, rect.y
+				+ margin, rect.width - 2 * margin, rect.height - 2 * margin, 0,
+				1, 1, 0);
+		smallLabelsFont.draw(Game.spriteBatch, lbl, rect.x + rect.width / 2
+				- smallLabelsFont.getBounds(lbl).width / 2, rect.y
+				- smallLabelsFont.getBounds(lbl).height / 2);
 
 		Game.spriteBatch.end();
 	}
@@ -259,14 +274,18 @@ public class GameOverState extends State implements InputProcessor {
 		touch.position.y = 0;
 		touch.touched = false;
 
-		if (this.button.contains(screenX, Game.screenDimension.y - screenY))
-			StateManager.changeState(new MainMenuState());
-		else if (leaderboardBtn.contains(screenX, Game.screenDimension.y
-				- screenY))
+		if (retryBtn.contains(screenX, Game.screenDimension.y - screenY)) {
+			StateManager.changeState(new GamePlayState());
+			Game.clickSound.play();
+		} else if (leaderboardBtn.contains(screenX, Game.screenDimension.y
+				- screenY)) {
 			Game.actionResolver.getLeaderboardGPGS();
-		else if (achievementsBtn.contains(screenX, Game.screenDimension.y
-				- screenY))
+			Game.clickSound.play();
+		} else if (achievementsBtn.contains(screenX, Game.screenDimension.y
+				- screenY)) {
 			Game.actionResolver.getAchievementsGPGS();
+			Game.clickSound.play();
+		}
 
 		return true;
 	}

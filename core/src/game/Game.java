@@ -16,7 +16,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -29,7 +28,6 @@ public class Game extends ApplicationAdapter {
 
 	public static final int FPS = 60;
 	public static final float SPF = 1.0f / FPS;
-	public static float timeAccumulator;
 
 	public static Vector2 screenDimension;
 	public static float GRAVITY;
@@ -39,7 +37,7 @@ public class Game extends ApplicationAdapter {
 	public static ShapeRenderer shapeRenderer;
 	public static SpriteBatch spriteBatch;
 
-	public static Sound bumpSound, thumpSound;
+	public static Sound bumpSound, thumpSound, clickSound;
 
 	private final static String PREFERENCES_ID = "scores";
 	private final static String BEST_ID = "best";
@@ -74,8 +72,6 @@ public class Game extends ApplicationAdapter {
 			break;
 		}
 
-		timeAccumulator = 0;
-
 		updateScreenDimension();
 		GRAVITY = 0.002f * screenDimension.x;
 
@@ -87,6 +83,7 @@ public class Game extends ApplicationAdapter {
 		// load the shock sound effect
 		bumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
 		thumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/thump.wav"));
+		clickSound = Gdx.audio.newSound(Gdx.files.internal("sounds/click.wav"));
 
 		// available obstacle colors
 		obstacleColors = new Array<Color>();
@@ -112,13 +109,7 @@ public class Game extends ApplicationAdapter {
 
 	@Override
 	public void render() {
-		timeAccumulator += Gdx.graphics.getDeltaTime();
-
-		int elapsedFrames = MathUtils.floor(timeAccumulator / SPF);
-		timeAccumulator %= SPF;
-
-		for (int i = 0; i < elapsedFrames; i++)
-			StateManager.updateState();
+		StateManager.updateState();
 
 		StateManager.renderState();
 	}
@@ -129,6 +120,7 @@ public class Game extends ApplicationAdapter {
 
 		bumpSound.dispose();
 		thumpSound.dispose();
+		clickSound.dispose();
 
 		fontManager.dispose();
 		polygonSpriteBatch.dispose();

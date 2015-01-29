@@ -16,16 +16,18 @@ import com.badlogic.gdx.math.Vector2;
 public class MainMenuState extends State implements InputProcessor {
 
 	private final static Label titleLbl = new Label("Obstakles",
-			(int) Math.round(0.15 * Gdx.graphics.getWidth()), 0.8f);
+			(int) Math.round(0.16 * Gdx.graphics.getWidth()), 0.8f);
 
 	public static Label infoLbl = new Label("",
-			(int) Math.round(0.05 * Gdx.graphics.getWidth()), 0.45f);
+			(int) Math.round(0.06 * Gdx.graphics.getWidth()), 0.45f);
 
 	private final static Label creditsLbl = new Label(
-			"© 2014 Henrique Ferrolho", (int) Math.round(0.03 * Gdx.graphics
+			"© 2014 Henrique Ferrolho", (int) Math.round(0.04 * Gdx.graphics
 					.getWidth()), 0.1f);
 
 	private Touch touch;
+	private Color fontColor;
+
 	private float obstacleSpawnProb;
 	private float infoDisplacement, maxInfoDisplacement, infoSpeed;
 
@@ -38,6 +40,7 @@ public class MainMenuState extends State implements InputProcessor {
 		Gdx.input.setInputProcessor(this);
 
 		touch = new Touch();
+		fontColor = Color.DARK_GRAY;
 
 		Game.clearObstacles();
 		obstacleSpawnProb = 30;
@@ -101,14 +104,14 @@ public class MainMenuState extends State implements InputProcessor {
 	private void renderTitle() {
 		BitmapFont font = Game.fontManager.getFont(titleLbl.size);
 
-		float x = Game.screenDimension.x / 2
-				- font.getBounds(titleLbl.text).width / 2;
-		float y = titleLbl.position * Game.screenDimension.y
-				+ font.getBounds(titleLbl.text).height / 2;
+		int x = (int) (Game.screenDimension.x / 2 - font
+				.getBounds(titleLbl.text).width / 2);
+		int y = (int) (titleLbl.position * Game.screenDimension.y + font
+				.getBounds(titleLbl.text).height / 2);
 
 		Game.spriteBatch.begin();
 
-		font.setColor(0, 0, 0, 1);
+		font.setColor(fontColor);
 		font.draw(Game.spriteBatch, titleLbl.text, x, y);
 
 		Game.spriteBatch.end();
@@ -117,14 +120,14 @@ public class MainMenuState extends State implements InputProcessor {
 	private void renderInfo() {
 		BitmapFont font = Game.fontManager.getFont(infoLbl.size);
 
-		float x = Game.screenDimension.x / 2
-				- font.getBounds(infoLbl.text).width / 2;
-		float y = infoLbl.position * Game.screenDimension.y
-				+ font.getBounds(infoLbl.text).height / 2 + infoDisplacement;
+		int x = (int) (Game.screenDimension.x / 2 - font
+				.getBounds(infoLbl.text).width / 2);
+		int y = (int) (infoLbl.position * Game.screenDimension.y
+				+ font.getBounds(infoLbl.text).height / 2 + infoDisplacement);
 
 		Game.spriteBatch.begin();
 
-		font.setColor(0, 0, 0, 1);
+		font.setColor(fontColor);
 		font.draw(Game.spriteBatch, infoLbl.text, x, y);
 
 		Game.spriteBatch.end();
@@ -133,14 +136,14 @@ public class MainMenuState extends State implements InputProcessor {
 	private void renderCopyright() {
 		BitmapFont font = Game.fontManager.getFont(creditsLbl.size);
 
-		float x = Game.screenDimension.x / 2
-				- font.getBounds(creditsLbl.text).width / 2;
-		float y = creditsLbl.position * Game.screenDimension.y
-				+ font.getBounds(creditsLbl.text).height / 2;
+		int x = (int) (Game.screenDimension.x / 2 - font
+				.getBounds(creditsLbl.text).width / 2);
+		int y = (int) (creditsLbl.position * Game.screenDimension.y + font
+				.getBounds(creditsLbl.text).height / 2);
 
 		Game.spriteBatch.begin();
 
-		font.setColor(0, 0, 0, 1);
+		font.setColor(fontColor);
 		font.draw(Game.spriteBatch, creditsLbl.text, x, y);
 
 		Game.spriteBatch.end();
@@ -158,7 +161,6 @@ public class MainMenuState extends State implements InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
-
 		switch (Gdx.app.getType()) {
 		case Android:
 			if (keycode == Keys.BACK)
