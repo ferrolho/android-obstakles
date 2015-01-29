@@ -15,7 +15,6 @@ import utilities.Touch;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
@@ -40,7 +39,7 @@ public class GamePlayState extends State implements InputProcessor {
 		scoreFontSize = (int) (0.08 * Game.screenDimension.x);
 		elapsedTime = 0;
 
-		Game.player = new Player(Color.BLUE);
+		Game.player = new Player();
 		Game.clearObstacles();
 
 		Gdx.input.setInputProcessor(this);

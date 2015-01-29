@@ -131,10 +131,12 @@ public class Obstacle extends Polygon {
 		Game.polygonSpriteBatch.end();
 
 		// outline
-		// Game.shapeRenderer.begin(ShapeType.Line);
-		// Game.shapeRenderer.setColor(Color.BLACK);
-		// Game.shapeRenderer.polygon(outlineVertices);
-		// Game.shapeRenderer.end();
+		/*
+		 * Game.shapeRenderer.begin(ShapeType.Line);
+		 * Game.shapeRenderer.setColor(Color.DARK_GRAY);
+		 * Game.shapeRenderer.polygon(outlineVertices);
+		 * Game.shapeRenderer.end();
+		 */
 	}
 
 	/** Returns whether an x, y pair is contained within the obstacle. */

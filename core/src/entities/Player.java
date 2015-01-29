@@ -11,13 +11,12 @@ public class Player extends Rectangle {
 
 	private static final long serialVersionUID = 1L;
 
-	public Color color;
+	public static Color color;
+
 	public Vector2 velocity;
 	public float acceleration, breakSpeed, topSpeed;
 
-	public Player(Color color) {
-		this.color = color;
-
+	public Player() {
 		float size = (int) (0.06 * Game.screenDimension.x);
 
 		x = Game.screenDimension.x / 2 - size / 2;
