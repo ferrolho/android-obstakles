@@ -119,8 +119,8 @@ public class GameOverState extends State implements InputProcessor {
 		smallLabelsFont = Game.fontManager.getFont((int) (0.8 * scoreLbl.size));
 		smallLabelsFont.setColor(fontColor);
 
-		lastScoreLbl = "SCORE";
-		bestScoreLbl = "BEST";
+		lastScoreLbl = "Score";
+		bestScoreLbl = "Best";
 
 		DecimalFormat f = new DecimalFormat("##0.00");
 		lastScoreStr = f.format(Game.lastScore);
@@ -171,15 +171,15 @@ public class GameOverState extends State implements InputProcessor {
 	}
 
 	private void renderButtons() {
-		retryLbl = "RETRY";
-		leaderboardsLbl = "LEADERBOARDS";
-		achievementsLbl = "ACHIEVEMENTS";
+		retryLbl = "Retry";
+		leaderboardsLbl = "Leaderboards";
+		achievementsLbl = "Achievements";
 
 		Rectangle rect;
 		String lbl;
 
 		Game.shapeRenderer.begin(ShapeType.Filled);
-		Game.shapeRenderer.setColor(0.96f, 0.96f, 0.96f, 1);
+		Game.shapeRenderer.setColor(0.90f, 0.90f, 0.90f, 1);
 
 		rect = retryBtn;
 		Game.shapeRenderer.circle(rect.x + rect.width / 2, rect.y + rect.height
@@ -270,22 +270,25 @@ public class GameOverState extends State implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		if (Math.abs(touch.position.x - screenX) < Game.touchTolerance
+				&& Math.abs(touch.position.y - screenY) < Game.touchTolerance) {
+			if (retryBtn.contains(screenX, Game.screenDimension.y - screenY)) {
+				StateManager.changeState(new GamePlayState());
+				Game.clickSound.play();
+			} else if (leaderboardBtn.contains(screenX, Game.screenDimension.y
+					- screenY)) {
+				Game.actionResolver.getLeaderboardGPGS();
+				Game.clickSound.play();
+			} else if (achievementsBtn.contains(screenX, Game.screenDimension.y
+					- screenY)) {
+				Game.actionResolver.getAchievementsGPGS();
+				Game.clickSound.play();
+			}
+		}
+
 		touch.position.x = 0;
 		touch.position.y = 0;
 		touch.touched = false;
-
-		if (retryBtn.contains(screenX, Game.screenDimension.y - screenY)) {
-			StateManager.changeState(new GamePlayState());
-			Game.clickSound.play();
-		} else if (leaderboardBtn.contains(screenX, Game.screenDimension.y
-				- screenY)) {
-			Game.actionResolver.getLeaderboardGPGS();
-			Game.clickSound.play();
-		} else if (achievementsBtn.contains(screenX, Game.screenDimension.y
-				- screenY)) {
-			Game.actionResolver.getAchievementsGPGS();
-			Game.clickSound.play();
-		}
 
 		return true;
 	}

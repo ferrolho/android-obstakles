@@ -35,6 +35,13 @@ public class FontManager {
 		return fonts.get(size);
 	}
 
+	public void removeFont(int size) {
+		BitmapFont font = fonts.remove(size);
+
+		if (font != null)
+			font.dispose();
+	}
+
 	public void dispose() {
 		generator.dispose();
 

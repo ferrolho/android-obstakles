@@ -24,13 +24,18 @@ import entities.Player;
 
 public class Game extends ApplicationAdapter {
 
-	public static ActionResolver actionResolver;
+	public final static int FPS = 60;
+	public final static float SPF = 1.0f / FPS;
 
-	public static final int FPS = 60;
-	public static final float SPF = 1.0f / FPS;
+	private final static String PREFERENCES_ID = "scores";
+	private final static String BEST_ID = "best";
+	private final static String BEST_SUBMITTED_ID = "best-submitted";
 
 	public static Vector2 screenDimension;
 	public static float GRAVITY;
+	public static int touchTolerance;
+
+	public static ActionResolver actionResolver;
 
 	public static FontManager fontManager;
 	public static PolygonSpriteBatch polygonSpriteBatch;
@@ -38,10 +43,6 @@ public class Game extends ApplicationAdapter {
 	public static SpriteBatch spriteBatch;
 
 	public static Sound bumpSound, thumpSound, clickSound;
-
-	private final static String PREFERENCES_ID = "scores";
-	private final static String BEST_ID = "best";
-	private final static String BEST_SUBMITTED_ID = "best-submitted";
 
 	public static float lastScore, bestScore, bestScoreSubmitted;
 
@@ -74,6 +75,7 @@ public class Game extends ApplicationAdapter {
 
 		updateScreenDimension();
 		GRAVITY = 0.002f * screenDimension.x;
+		touchTolerance = (int) (0.005 * Game.screenDimension.x);
 
 		fontManager = new FontManager();
 		polygonSpriteBatch = new PolygonSpriteBatch();

@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
@@ -21,12 +22,12 @@ public class MainMenuState extends State implements InputProcessor {
 	public static Label infoLbl = new Label("",
 			(int) Math.round(0.06 * Gdx.graphics.getWidth()), 0.45f);
 
-	private final static Label creditsLbl = new Label(
+	private final static Label copyrightLbl = new Label(
 			"© 2014 Henrique Ferrolho", (int) Math.round(0.04 * Gdx.graphics
 					.getWidth()), 0.1f);
 
 	private Touch touch;
-	private Color fontColor;
+	private Color filterColor, fontColor;
 
 	private float obstacleSpawnProb;
 	private float infoDisplacement, maxInfoDisplacement, infoSpeed;
@@ -40,6 +41,7 @@ public class MainMenuState extends State implements InputProcessor {
 		Gdx.input.setInputProcessor(this);
 
 		touch = new Touch();
+		filterColor = new Color(1, 1, 1, 0.7f);
 		fontColor = Color.DARK_GRAY;
 
 		Game.clearObstacles();
@@ -90,6 +92,7 @@ public class MainMenuState extends State implements InputProcessor {
 
 		Game.drawObstacles();
 
+		renderFilter();
 		renderTitle();
 		renderInfo();
 		renderCopyright();
@@ -99,6 +102,24 @@ public class MainMenuState extends State implements InputProcessor {
 
 	@Override
 	public void dispose() {
+		Game.fontManager.removeFont(titleLbl.size);
+		Game.fontManager.removeFont(infoLbl.size);
+		Game.fontManager.removeFont(copyrightLbl.size);
+	}
+
+	private void renderFilter() {
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+		Game.shapeRenderer.begin(ShapeType.Filled);
+
+		Game.shapeRenderer.setColor(filterColor);
+		Game.shapeRenderer.rect(0, 0, Game.screenDimension.x,
+				Game.screenDimension.y);
+
+		Game.shapeRenderer.end();
+
+		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 
 	private void renderTitle() {
@@ -134,17 +155,17 @@ public class MainMenuState extends State implements InputProcessor {
 	}
 
 	private void renderCopyright() {
-		BitmapFont font = Game.fontManager.getFont(creditsLbl.size);
+		BitmapFont font = Game.fontManager.getFont(copyrightLbl.size);
 
 		int x = (int) (Game.screenDimension.x / 2 - font
-				.getBounds(creditsLbl.text).width / 2);
-		int y = (int) (creditsLbl.position * Game.screenDimension.y + font
-				.getBounds(creditsLbl.text).height / 2);
+				.getBounds(copyrightLbl.text).width / 2);
+		int y = (int) (copyrightLbl.position * Game.screenDimension.y + font
+				.getBounds(copyrightLbl.text).height / 2);
 
 		Game.spriteBatch.begin();
 
 		font.setColor(fontColor);
-		font.draw(Game.spriteBatch, creditsLbl.text, x, y);
+		font.draw(Game.spriteBatch, copyrightLbl.text, x, y);
 
 		Game.spriteBatch.end();
 	}
@@ -202,11 +223,15 @@ public class MainMenuState extends State implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (!transitioningToPlayState) {
-			animationPos.x = screenX;
-			animationPos.y = Game.screenDimension.y - screenY;
+		if (Math.abs(touch.position.x - screenX) < Game.touchTolerance
+				&& Math.abs(touch.position.y - screenY) < Game.touchTolerance) {
+			if (!transitioningToPlayState) {
+				animationPos.x = screenX;
+				animationPos.y = Game.screenDimension.y - screenY;
 
-			transitioningToPlayState = true;
+				Game.clickSound.play();
+				transitioningToPlayState = true;
+			}
 		}
 
 		touch.position.x = 0;
