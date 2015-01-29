@@ -9,10 +9,11 @@ Another android game.
 
 #Changelog
 ##To do
+- Increase touch tolerance;
+- Enlarge app icon;
 - Add instructions;
 - Add animation on wall collisions;
-- Desaturate obstacle colors;
-- Special item to clear all falling obstacles. (?)
+- Desaturate obstacle colors.
 
 ##v3.1
 - Fixed game over menu buttons bug;
