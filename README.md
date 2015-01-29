@@ -9,12 +9,18 @@ Another android game.
 
 #Changelog
 ##To do
-- [ ] Add instructions
-- [ ] Add try again button to game over menu
-- [ ] Add animation on wall collisions
-- [ ] Desaturate obstacle colors
-- [ ] Special item to clear all falling obstacles (?)
-- [ ] Replace game over menu buttons text with icons (?)
+- Add instructions
+- Add animation on wall collisions
+- Desaturate obstacle colors
+- Special item to clear all falling obstacles (?)
+
+##v3.0
+- Added retry button to game over menu
+- Redesigned game over menu and its buttons
+- Removed obstacles outline
+- Fixed bug in collisions detection
+- Enabled auto rotation through landscape modes
+- Fixed other bugs
 
 ##v2.1
 - Fixed bug in leaderboards
@@ -28,13 +34,12 @@ Another android game.
 - Added obstacles with different shapes
 
 #Screenshots
-###Game as was on 18-01-2015
-![image](screenshots/main-menu.png)
+![image](screenshots/current-version/main-menu.png)
 #####Fig. 1: Main menu
 ***
-![image](screenshots/game-play.png)
+![image](screenshots/current-version/game-play.png)
 #####Fig. 2: Gameplay
 ***
-![image](screenshots/game-over.png)
+![image](screenshots/current-version/game-over.png)
 #####Fig. 3: Game over
 ***
