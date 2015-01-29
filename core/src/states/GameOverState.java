@@ -8,6 +8,7 @@ import utilities.Label;
 import utilities.Touch;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -185,13 +186,15 @@ public class GameOverState extends State implements InputProcessor {
 		Game.shapeRenderer.circle(rect.x + rect.width / 2, rect.y + rect.height
 				/ 2, rect.width / 2);
 
-		rect = leaderboardBtn;
-		Game.shapeRenderer.circle(rect.x + rect.width / 2, rect.y + rect.height
-				/ 2, rect.width / 2);
+		if (Gdx.app.getType() != ApplicationType.Desktop) {
+			rect = leaderboardBtn;
+			Game.shapeRenderer.circle(rect.x + rect.width / 2, rect.y
+					+ rect.height / 2, rect.width / 2);
 
-		rect = achievementsBtn;
-		Game.shapeRenderer.circle(rect.x + rect.width / 2, rect.y + rect.height
-				/ 2, rect.width / 2);
+			rect = achievementsBtn;
+			Game.shapeRenderer.circle(rect.x + rect.width / 2, rect.y
+					+ rect.height / 2, rect.width / 2);
+		}
 
 		Game.shapeRenderer.end();
 
@@ -206,25 +209,27 @@ public class GameOverState extends State implements InputProcessor {
 				- smallLabelsFont.getBounds(lbl).width / 2, rect.y
 				- smallLabelsFont.getBounds(lbl).height / 2);
 
-		margin *= 0.75f;
+		if (Gdx.app.getType() != ApplicationType.Desktop) {
+			margin *= 0.75f;
 
-		rect = leaderboardBtn;
-		lbl = leaderboardsLbl;
-		Game.spriteBatch.draw(leaderboardText, rect.x + margin,
-				rect.y + margin, rect.width - 2 * margin, rect.height - 2
-						* margin, 0, 1, 1, 0);
-		smallLabelsFont.draw(Game.spriteBatch, lbl, rect.x + rect.width / 2
-				- smallLabelsFont.getBounds(lbl).width / 2, rect.y
-				- smallLabelsFont.getBounds(lbl).height / 2);
+			rect = leaderboardBtn;
+			lbl = leaderboardsLbl;
+			Game.spriteBatch.draw(leaderboardText, rect.x + margin, rect.y
+					+ margin, rect.width - 2 * margin,
+					rect.height - 2 * margin, 0, 1, 1, 0);
+			smallLabelsFont.draw(Game.spriteBatch, lbl, rect.x + rect.width / 2
+					- smallLabelsFont.getBounds(lbl).width / 2, rect.y
+					- smallLabelsFont.getBounds(lbl).height / 2);
 
-		rect = achievementsBtn;
-		lbl = achievementsLbl;
-		Game.spriteBatch.draw(achievementsText, rect.x + margin, rect.y
-				+ margin, rect.width - 2 * margin, rect.height - 2 * margin, 0,
-				1, 1, 0);
-		smallLabelsFont.draw(Game.spriteBatch, lbl, rect.x + rect.width / 2
-				- smallLabelsFont.getBounds(lbl).width / 2, rect.y
-				- smallLabelsFont.getBounds(lbl).height / 2);
+			rect = achievementsBtn;
+			lbl = achievementsLbl;
+			Game.spriteBatch.draw(achievementsText, rect.x + margin, rect.y
+					+ margin, rect.width - 2 * margin,
+					rect.height - 2 * margin, 0, 1, 1, 0);
+			smallLabelsFont.draw(Game.spriteBatch, lbl, rect.x + rect.width / 2
+					- smallLabelsFont.getBounds(lbl).width / 2, rect.y
+					- smallLabelsFont.getBounds(lbl).height / 2);
+		}
 
 		Game.spriteBatch.end();
 	}
@@ -275,14 +280,18 @@ public class GameOverState extends State implements InputProcessor {
 			if (retryBtn.contains(screenX, Game.screenDimension.y - screenY)) {
 				StateManager.changeState(new GamePlayState());
 				Game.clickSound.play();
-			} else if (leaderboardBtn.contains(screenX, Game.screenDimension.y
-					- screenY)) {
-				Game.actionResolver.getLeaderboardGPGS();
-				Game.clickSound.play();
-			} else if (achievementsBtn.contains(screenX, Game.screenDimension.y
-					- screenY)) {
-				Game.actionResolver.getAchievementsGPGS();
-				Game.clickSound.play();
+			}
+
+			if (Gdx.app.getType() != ApplicationType.Desktop) {
+				if (leaderboardBtn.contains(screenX, Game.screenDimension.y
+						- screenY)) {
+					Game.actionResolver.getLeaderboardGPGS();
+					Game.clickSound.play();
+				} else if (achievementsBtn.contains(screenX,
+						Game.screenDimension.y - screenY)) {
+					Game.actionResolver.getAchievementsGPGS();
+					Game.clickSound.play();
+				}
 			}
 		}
 
