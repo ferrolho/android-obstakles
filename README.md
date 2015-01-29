@@ -9,11 +9,14 @@ Another android game.
 
 #Changelog
 ##To do
-- Increase touch tolerance;
-- Enlarge app icon;
 - Add instructions;
-- Add animation on wall collisions;
-- Desaturate obstacle colors.
+- Add animation on wall collisions.
+
+##v3.2
+- Redesigned app icon;
+- Changed obstacles color scheme;
+- Increased buttons touch tolerance;
+- Other minor changes.
 
 ##v3.1
 - Fixed game over menu buttons bug;
