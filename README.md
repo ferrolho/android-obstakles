@@ -43,12 +43,12 @@ Another android game.
 - Added obstacles with different shapes.
 
 #Screenshots
-![image](screenshots/current-version/7-inch/main-menu.png)
+![image](screenshots/current-version/main-menu.png)
 #####Fig. 1: Main menu
 ***
-![image](screenshots/current-version/7-inch/game-play.png)
+![image](screenshots/current-version/game-play.png)
 #####Fig. 2: Gameplay
 ***
-![image](screenshots/current-version/7-inch/game-over.png)
+![image](screenshots/current-version/game-over.png)
 #####Fig. 3: Game over
 ***
