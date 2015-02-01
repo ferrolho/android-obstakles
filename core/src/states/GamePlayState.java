@@ -21,16 +21,15 @@ import com.badlogic.gdx.utils.Array;
 
 public class GamePlayState extends State implements InputProcessor {
 
-	public float timeAccumulator;
+	public static Player player;
 
+	private float timeAccumulator;
 	private float obstacleSpawnProb;
 
 	private int scoreFontSize;
 	private float elapsedTime;
 
 	private boolean gameOver;
-
-	public static Player player;
 
 	@Override
 	public void create() {
@@ -117,7 +116,8 @@ public class GamePlayState extends State implements InputProcessor {
 				// check player collision
 				for (Obstacle obstacle : Game.obstacles) {
 					// skip obstacles that are clearly not colliding
-					if (Obstacle.spawnHeight + obstacle.positionRelativeToSpawn.y
+					if (Obstacle.spawnHeight
+							+ obstacle.positionRelativeToSpawn.y
 							- Obstacle.maxDistToCenter > player.y
 							+ player.height)
 						continue;

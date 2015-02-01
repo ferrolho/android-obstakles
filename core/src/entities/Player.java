@@ -17,7 +17,7 @@ public final class Player extends Rectangle {
 	public float acceleration, breakSpeed, topSpeed;
 
 	public Player() {
-		float size = (int) (0.06 * Game.screenDimension.x);
+		final float size = (int) (0.06 * Game.screenDimension.x);
 
 		x = Game.screenDimension.x / 2 - size / 2;
 		y = 0;
@@ -110,18 +110,20 @@ public final class Player extends Rectangle {
 	}
 
 	public boolean overlaps(Obstacle obstacle) {
+		if (obstacle.contains(x, y + height))
+			return true;
+		if (obstacle.contains(x + width, y + height))
+			return true;
 		if (obstacle.contains(x, y))
 			return true;
-		else if (obstacle.contains(x + width, y))
-			return true;
-		else if (obstacle.contains(x + width, y + height))
-			return true;
-		else if (obstacle.contains(x, y + height))
+		if (obstacle.contains(x + width, y))
 			return true;
 
-		for (int i = 0; i < obstacle.getTransformedVertices().length / 2; i += 2)
-			if (this.contains(obstacle.getTransformedVertices()[i],
-					obstacle.getTransformedVertices()[i + 1]))
+		final float[] transformedVertices = obstacle.transformedVertices;
+		final int numVertices = transformedVertices.length / 2;
+
+		for (int i = 0; i < numVertices; i += 2)
+			if (contains(transformedVertices[i], transformedVertices[i + 1]))
 				return true;
 
 		return false;

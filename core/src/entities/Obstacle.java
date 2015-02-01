@@ -20,19 +20,18 @@ public final class Obstacle extends Polygon {
 
 	public static final float minDistToCenter = 0.02f * Game.screenDimension.x;
 	public static final float maxDistToCenter = 0.1f * Game.screenDimension.x;
+	private static final float maxRotationSpeed = 5;
 
 	public static final float spawnHeight = Game.screenDimension.y
 			+ maxDistToCenter;
 	public static final float lifeSpanDistance = spawnHeight + maxDistToCenter;
 
-	private static final float maxRotationSpeed = 5;
-
 	private Pixmap pix;
 	private PolygonSprite polygonSprite;
 	private TextureRegion textureRegion;
 	private short[] triangles;
-	private float[] transformedVertices;
 
+	public float[] transformedVertices;
 	public Vector2 centerSpawn, positionRelativeToSpawn, velocity;
 	public float rotation, rotationSpeed;
 	public Color color;
