@@ -277,23 +277,26 @@ public class GameOverState extends State implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (Math.abs(touch.position.x - screenX) < Game.touchTolerance
-				&& Math.abs(touch.position.y - screenY) < Game.touchTolerance) {
-			if (retryBtn.contains(screenX, Game.screenDimension.y - screenY)) {
-				StateManager.changeState(new GamePlayState());
-				Game.clickSound.play();
-			}
+		if (retryBtn.contains(screenX, Game.screenDimension.y - screenY)
+				&& retryBtn.contains(touch.position.x, Game.screenDimension.y
+						- touch.position.y)) {
+			StateManager.changeState(new GamePlayState());
+			Game.clickSound.play();
+		}
 
-			if (Gdx.app.getType() != ApplicationType.Desktop) {
-				if (leaderboardBtn.contains(screenX, Game.screenDimension.y
-						- screenY)) {
-					Game.actionResolver.getLeaderboardGPGS();
-					Game.clickSound.play();
-				} else if (achievementsBtn.contains(screenX,
-						Game.screenDimension.y - screenY)) {
-					Game.actionResolver.getAchievementsGPGS();
-					Game.clickSound.play();
-				}
+		if (Gdx.app.getType() != ApplicationType.Desktop) {
+			if (leaderboardBtn.contains(screenX, Game.screenDimension.y
+					- screenY)
+					&& leaderboardBtn.contains(touch.position.x,
+							Game.screenDimension.y - touch.position.y)) {
+				Game.actionResolver.getLeaderboardGPGS();
+				Game.clickSound.play();
+			} else if (achievementsBtn.contains(screenX, Game.screenDimension.y
+					- screenY)
+					&& achievementsBtn.contains(touch.position.x,
+							Game.screenDimension.y - touch.position.y)) {
+				Game.actionResolver.getAchievementsGPGS();
+				Game.clickSound.play();
 			}
 		}
 
