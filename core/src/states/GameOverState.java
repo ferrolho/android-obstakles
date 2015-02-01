@@ -29,7 +29,7 @@ public class GameOverState extends State implements InputProcessor {
 	private String lastScoreLbl, bestScoreLbl, lastScoreStr, bestScoreStr;
 	private int lastLblX, lastScoreX, bestLblX, bestScoreX, labelsY, scoresY;
 
-	private float buttonsY;
+	private int buttonsY;
 	private Rectangle retryBtn, leaderboardBtn, achievementsBtn;
 	private Texture retryText, leaderboardText, achievementsText;
 	private String retryLbl, leaderboardsLbl, achievementsLbl;
@@ -55,7 +55,7 @@ public class GameOverState extends State implements InputProcessor {
 
 		prepareScores();
 
-		buttonsY = 0.2f * Game.screenDimension.y;
+		buttonsY = (int) (0.2f * Game.screenDimension.y);
 		float bigBtnSize = 0.2f;
 		float smallBtnSize = bigBtnSize - 0.05f;
 
@@ -205,9 +205,9 @@ public class GameOverState extends State implements InputProcessor {
 		lbl = retryLbl;
 		Game.spriteBatch.draw(retryText, rect.x + margin, rect.y + margin,
 				rect.width - 2 * margin, rect.height - 2 * margin, 0, 1, 1, 0);
-		smallLabelsFont.draw(Game.spriteBatch, lbl, rect.x + rect.width / 2
-				- smallLabelsFont.getBounds(lbl).width / 2, rect.y
-				- smallLabelsFont.getBounds(lbl).height / 2);
+		smallLabelsFont.draw(Game.spriteBatch, lbl, (int) (rect.x + rect.width
+				/ 2 - smallLabelsFont.getBounds(lbl).width / 2),
+				(int) (rect.y - smallLabelsFont.getBounds(lbl).height / 2));
 
 		if (Gdx.app.getType() != ApplicationType.Desktop) {
 			margin *= 0.75f;
@@ -217,18 +217,20 @@ public class GameOverState extends State implements InputProcessor {
 			Game.spriteBatch.draw(leaderboardText, rect.x + margin, rect.y
 					+ margin, rect.width - 2 * margin,
 					rect.height - 2 * margin, 0, 1, 1, 0);
-			smallLabelsFont.draw(Game.spriteBatch, lbl, rect.x + rect.width / 2
-					- smallLabelsFont.getBounds(lbl).width / 2, rect.y
-					- smallLabelsFont.getBounds(lbl).height / 2);
+			smallLabelsFont.draw(Game.spriteBatch, lbl,
+					(int) (rect.x + rect.width / 2 - smallLabelsFont
+							.getBounds(lbl).width / 2),
+					(int) (rect.y - smallLabelsFont.getBounds(lbl).height / 2));
 
 			rect = achievementsBtn;
 			lbl = achievementsLbl;
 			Game.spriteBatch.draw(achievementsText, rect.x + margin, rect.y
 					+ margin, rect.width - 2 * margin,
 					rect.height - 2 * margin, 0, 1, 1, 0);
-			smallLabelsFont.draw(Game.spriteBatch, lbl, rect.x + rect.width / 2
-					- smallLabelsFont.getBounds(lbl).width / 2, rect.y
-					- smallLabelsFont.getBounds(lbl).height / 2);
+			smallLabelsFont.draw(Game.spriteBatch, lbl,
+					(int) (rect.x + rect.width / 2 - smallLabelsFont
+							.getBounds(lbl).width / 2),
+					(int) (rect.y - smallLabelsFont.getBounds(lbl).height / 2));
 		}
 
 		Game.spriteBatch.end();

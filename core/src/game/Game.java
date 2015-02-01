@@ -1,6 +1,8 @@
 package game;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import states.MainMenuState;
 import states.StateManager;
@@ -17,7 +19,6 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 import entities.Obstacle;
 import entities.Player;
@@ -44,8 +45,8 @@ public class Game extends ApplicationAdapter {
 
 	public static Sound bumpSound, thumpSound, clickSound;
 
-	public static Array<Color> obstacleColors;
-	public static Array<Obstacle> obstacles;
+	public static List<Color> obstacleColors;
+	public static List<Obstacle> obstacles, spareObstacles;
 
 	public static float lastScore, bestScore, bestScoreSubmitted;
 
@@ -72,7 +73,8 @@ public class Game extends ApplicationAdapter {
 		clickSound = Gdx.audio.newSound(Gdx.files.internal("sounds/click.wav"));
 
 		setColorScheme();
-		obstacles = new Array<Obstacle>();
+		obstacles = new ArrayList<Obstacle>();
+		spareObstacles = new ArrayList<Obstacle>();
 
 		// go to main menu
 		StateManager.changeState(new MainMenuState());
@@ -96,8 +98,9 @@ public class Game extends ApplicationAdapter {
 	public void dispose() {
 		StateManager.disposeState();
 
-		obstacles = null;
 		obstacleColors = null;
+		obstacles = null;
+		spareObstacles = null;
 
 		bumpSound.dispose();
 		thumpSound.dispose();
@@ -114,7 +117,7 @@ public class Game extends ApplicationAdapter {
 	private void setColorScheme() {
 		Player.color = new RGBA(33, 50, 64, 1);
 
-		obstacleColors = new Array<Color>();
+		obstacleColors = new ArrayList<Color>();
 
 		obstacleColors.add(new RGBA(16, 200, 205, 1)); // blue
 		obstacleColors.add(new RGBA(255, 51, 51, 1)); // red
@@ -169,10 +172,18 @@ public class Game extends ApplicationAdapter {
 
 	public static void clearObstacles() {
 		obstacles.clear();
+		spareObstacles.clear();
 	}
 
 	public static void spawnObstacle() {
-		obstacles.add(new Obstacle());
+		if (spareObstacles.isEmpty())
+			obstacles.add(new Obstacle());
+		else {
+			Obstacle obstacle = spareObstacles.remove(0);
+			obstacle.reset();
+
+			obstacles.add(obstacle);
+		}
 	}
 
 	public static void updateObstacles() {
@@ -183,8 +194,10 @@ public class Game extends ApplicationAdapter {
 
 			obstacle.update();
 
-			if (-obstacle.positionRelativeToSpawn.y > Obstacle.lifeSpanDistance)
+			if (-obstacle.positionRelativeToSpawn.y > Obstacle.lifeSpanDistance) {
+				spareObstacles.add(obstacle);
 				iterator.remove();
+			}
 		}
 	}
 

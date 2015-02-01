@@ -16,6 +16,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public final class Obstacle extends Polygon {
 
+	public static final int minNumVertices = 4, maxNumVertices = 6;
+
 	public static final float minDistToCenter = 0.02f * Game.screenDimension.x;
 	public static final float maxDistToCenter = 0.1f * Game.screenDimension.x;
 
@@ -25,47 +27,78 @@ public final class Obstacle extends Polygon {
 
 	private static final float maxRotationSpeed = 5;
 
+	private Pixmap pix;
 	private PolygonSprite polygonSprite;
 	private TextureRegion textureRegion;
 	private short[] triangles;
-	private float[] outlineVertices;
+	private float[] transformedVertices;
 
 	public Vector2 centerSpawn, positionRelativeToSpawn, velocity;
 	public float rotation, rotationSpeed;
 	public Color color;
 
 	public Obstacle() {
+		centerSpawn = new Vector2();
+		positionRelativeToSpawn = new Vector2();
+		velocity = new Vector2();
+
+		pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+
+		reset();
+	}
+
+	public void reset() {
 		generateGeometry();
+
+		positionRelativeToSpawn.set(0, 0);
 
 		rotation = 0;
 		rotationSpeed = MathUtils.random(-maxRotationSpeed, maxRotationSpeed);
 
-		positionRelativeToSpawn = new Vector2();
-		velocity = new Vector2(0, -0.5f * Math.abs(rotationSpeed));
+		velocity.y = -0.5f * Math.abs(rotationSpeed);
 
-		Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
 		pix.setColor(Game.obstacleColors.get(MathUtils
-				.random(Game.obstacleColors.size - 1)));
+				.random(Game.obstacleColors.size() - 1)));
 		pix.fill();
-
 		textureRegion = new TextureRegion(new Texture(pix));
 
 		updatePolyRegAndOutlineVertices();
 	}
 
+	public void update() {
+		velocity.y -= 0.1 * Game.gravity;
+		positionRelativeToSpawn.y += velocity.y;
+
+		rotation = (rotation + rotationSpeed) % 360;
+
+		setPosition(0, positionRelativeToSpawn.y);
+		setRotation(rotation);
+
+		updatePolyRegAndOutlineVertices();
+	}
+
+	public void draw() {
+		Game.polygonSpriteBatch.begin();
+
+		polygonSprite.draw(Game.polygonSpriteBatch);
+
+		Game.polygonSpriteBatch.end();
+	}
+
 	private void generateGeometry() {
 		// randomly position obstacle center
-		centerSpawn = new Vector2(MathUtils.random(Game.screenDimension.x),
-				spawnHeight);
+		centerSpawn.x = MathUtils.random(Game.screenDimension.x);
+		centerSpawn.y = spawnHeight;
 
 		// randomly pick obstacle number of vertices
-		int numVertices = MathUtils.random(4, 7);
+		final int numVertices = MathUtils
+				.random(minNumVertices, maxNumVertices);
 
 		// sector angle is the angle in which a vertex can be spawned
-		float sectorAngle = 360f / numVertices;
+		final float sectorAngle = 360f / numVertices;
 
 		// allocate memory for the vertices, including the center
-		float[] vertices = new float[2 + numVertices * 2];
+		final float[] vertices = new float[2 + numVertices * 2];
 
 		// save center to vertices array
 		vertices[0] = centerSpawn.x;
@@ -73,9 +106,10 @@ public final class Obstacle extends Polygon {
 
 		// randomly place each vertex inside its own sector
 		for (int i = 0; i < numVertices; i++) {
-			float vertexAngle = MathUtils.random(sectorAngle) + i * sectorAngle;
+			final float vertexAngle = MathUtils.random(sectorAngle) + i
+					* sectorAngle;
 
-			float distToCenter = MathUtils.random(minDistToCenter,
+			final float distToCenter = MathUtils.random(minDistToCenter,
 					maxDistToCenter);
 
 			// build point coordinates
@@ -102,48 +136,21 @@ public final class Obstacle extends Polygon {
 		}
 	}
 
-	public void update() {
-		velocity.y -= 0.1 * Game.gravity;
-		positionRelativeToSpawn.y += velocity.y;
-
-		rotation = (rotation + rotationSpeed) % 360;
-
-		setPosition(0, positionRelativeToSpawn.y);
-		setRotation(rotation);
-
-		updatePolyRegAndOutlineVertices();
-	}
-
 	private void updatePolyRegAndOutlineVertices() {
+		transformedVertices = getTransformedVertices();
+
 		PolygonRegion polyReg = new PolygonRegion(textureRegion,
-				getTransformedVertices(), triangles);
+				transformedVertices, triangles);
 
 		polygonSprite = new PolygonSprite(polyReg);
 		polygonSprite.setRegion(polyReg);
-
-		outlineVertices = Arrays.copyOfRange(getTransformedVertices(), 2,
-				getTransformedVertices().length);
-	}
-
-	public void draw() {
-		// fill
-		Game.polygonSpriteBatch.begin();
-		polygonSprite.draw(Game.polygonSpriteBatch);
-		Game.polygonSpriteBatch.end();
-
-		// outline
-		/*
-		 * Game.shapeRenderer.begin(ShapeType.Line);
-		 * Game.shapeRenderer.setColor(Color.DARK_GRAY);
-		 * Game.shapeRenderer.polygon(outlineVertices);
-		 * Game.shapeRenderer.end();
-		 */
 	}
 
 	/** Returns whether an x, y pair is contained within the obstacle. */
 	@Override
 	public boolean contains(float x, float y) {
-		final float[] vertices = outlineVertices;
+		final float[] vertices = Arrays.copyOfRange(transformedVertices, 2,
+				transformedVertices.length);
 		final int numFloats = vertices.length;
 		int intersects = 0;
 
