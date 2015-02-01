@@ -2,7 +2,7 @@ package utilities;
 
 import com.badlogic.gdx.graphics.Color;
 
-public class RGB extends Color {
+public final class RGBA extends Color {
 
 	/**
 	 * Constructor, sets the components of the color.
@@ -16,7 +16,7 @@ public class RGB extends Color {
 	 * @param a
 	 *            Alpha component, in the range [0, 1]
 	 */
-	public RGB(int r, int g, int b, float a) {
+	public RGBA(int r, int g, int b, float a) {
 		super((float) r / 255, (float) g / 255, (float) b / 255, a);
 	}
 

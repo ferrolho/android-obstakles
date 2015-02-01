@@ -95,7 +95,7 @@ public class GameOverState extends State implements InputProcessor {
 	public void render() {
 		Game.clearScreen(255, 255, 255, 1);
 
-		Game.player.draw();
+		GamePlayState.player.draw();
 
 		Game.drawObstacles();
 

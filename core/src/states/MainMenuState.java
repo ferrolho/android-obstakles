@@ -40,6 +40,19 @@ public class MainMenuState extends State implements InputProcessor {
 	public void create() {
 		Gdx.input.setInputProcessor(this);
 
+		switch (Gdx.app.getType()) {
+		case Android:
+			MainMenuState.infoLbl.text = "Tap anywhere to begin";
+			break;
+
+		case Desktop:
+			MainMenuState.infoLbl.text = "Click anywhere to begin";
+			break;
+
+		default:
+			break;
+		}
+
 		touch = new Touch();
 		filterColor = new Color(1, 1, 1, 0.7f);
 		fontColor = Color.DARK_GRAY;

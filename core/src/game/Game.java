@@ -5,9 +5,8 @@ import java.util.Iterator;
 import states.MainMenuState;
 import states.StateManager;
 import utilities.FontManager;
-import utilities.RGB;
+import utilities.RGBA;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -25,18 +24,18 @@ import entities.Player;
 
 public class Game extends ApplicationAdapter {
 
-	public final static int FPS = 60;
-	public final static float SPF = 1.0f / FPS;
+	private static final String PREFERENCES_ID = "scores";
+	private static final String BEST_ID = "best";
+	private static final String BEST_SUBMITTED_ID = "best-submitted";
 
-	private final static String PREFERENCES_ID = "scores";
-	private final static String BEST_ID = "best";
-	private final static String BEST_SUBMITTED_ID = "best-submitted";
-
-	public static Vector2 screenDimension;
-	public static float GRAVITY;
-	public static int touchTolerance;
+	public static final int FPS = 60;
+	public static final float SPF = 1.0f / FPS;
 
 	public static ActionResolver actionResolver;
+
+	public static Vector2 screenDimension;
+	public static float gravity;
+	public static int touchTolerance;
 
 	public static FontManager fontManager;
 	public static PolygonSpriteBatch polygonSpriteBatch;
@@ -45,12 +44,10 @@ public class Game extends ApplicationAdapter {
 
 	public static Sound bumpSound, thumpSound, clickSound;
 
-	public static float lastScore, bestScore, bestScoreSubmitted;
-
-	public static Player player;
-
 	public static Array<Color> obstacleColors;
 	public static Array<Obstacle> obstacles;
+
+	public static float lastScore, bestScore, bestScoreSubmitted;
 
 	public Game(ActionResolver actionResolver) {
 		Game.actionResolver = actionResolver;
@@ -58,25 +55,11 @@ public class Game extends ApplicationAdapter {
 
 	@Override
 	public void create() {
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		Gdx.input.setCatchBackKey(true);
 
-		switch (Gdx.app.getType()) {
-		case Android:
-			MainMenuState.infoLbl.text = "Tap anywhere to begin";
-			break;
-
-		case Desktop:
-			MainMenuState.infoLbl.text = "Click anywhere to begin";
-			break;
-
-		default:
-			break;
-		}
-
 		updateScreenDimension();
-		GRAVITY = 0.002f * screenDimension.x;
-		touchTolerance = (int) (0.01 * Game.screenDimension.x);
+		gravity = 0.002f * screenDimension.x;
+		touchTolerance = (int) (0.01f * Game.screenDimension.x);
 
 		fontManager = new FontManager();
 		polygonSpriteBatch = new PolygonSpriteBatch();
@@ -88,7 +71,7 @@ public class Game extends ApplicationAdapter {
 		thumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/thump.wav"));
 		clickSound = Gdx.audio.newSound(Gdx.files.internal("sounds/click.wav"));
 
-		useColorScheme(3);
+		setColorScheme();
 		obstacles = new Array<Obstacle>();
 
 		// go to main menu
@@ -113,6 +96,9 @@ public class Game extends ApplicationAdapter {
 	public void dispose() {
 		StateManager.disposeState();
 
+		obstacles = null;
+		obstacleColors = null;
+
 		bumpSound.dispose();
 		thumpSound.dispose();
 		clickSound.dispose();
@@ -121,50 +107,19 @@ public class Game extends ApplicationAdapter {
 		polygonSpriteBatch.dispose();
 		shapeRenderer.dispose();
 		spriteBatch.dispose();
+
+		screenDimension = null;
 	}
 
-	private void useColorScheme(int colorSchemeNo) {
-		switch (colorSchemeNo) {
-		case 3:
-			Player.color = new RGB(33, 50, 64, 1);
+	private void setColorScheme() {
+		Player.color = new RGBA(33, 50, 64, 1);
 
-			obstacleColors = new Array<Color>();
+		obstacleColors = new Array<Color>();
 
-			obstacleColors.add(new RGB(16, 200, 205, 1)); // blue
-			obstacleColors.add(new RGB(255, 51, 51, 1)); // red
-			obstacleColors.add(new RGB(255, 204, 0, 1)); // yellow
-			obstacleColors.add(new RGB(51, 255, 51, 1)); // green
-
-			break;
-
-		case 2:
-			Player.color = new RGB(66, 60, 64, 1);
-
-			obstacleColors = new Array<Color>();
-
-			obstacleColors.add(new RGB(197, 170, 245, 1));
-			obstacleColors.add(new RGB(163, 203, 241, 1));
-			obstacleColors.add(new RGB(121, 191, 161, 1));
-			obstacleColors.add(new RGB(245, 163, 82, 1));
-			obstacleColors.add(new RGB(251, 115, 116, 1));
-
-			break;
-
-		case 1:
-		default:
-			Player.color = Color.BLUE;
-
-			obstacleColors = new Array<Color>();
-
-			obstacleColors.add(Color.CYAN);
-			obstacleColors.add(Color.GREEN);
-			obstacleColors.add(Color.MAGENTA);
-			obstacleColors.add(Color.ORANGE);
-			obstacleColors.add(Color.RED);
-			obstacleColors.add(Color.YELLOW);
-
-			break;
-		}
+		obstacleColors.add(new RGBA(16, 200, 205, 1)); // blue
+		obstacleColors.add(new RGBA(255, 51, 51, 1)); // red
+		obstacleColors.add(new RGBA(255, 204, 0, 1)); // yellow
+		obstacleColors.add(new RGBA(51, 255, 51, 1)); // green
 	}
 
 	public static void udpateScore() {
@@ -205,9 +160,10 @@ public class Game extends ApplicationAdapter {
 		screenDimension.y = Gdx.graphics.getHeight();
 	}
 
-	public static final void clearScreen(float red, float green, float blue,
+	public static final void clearScreen(int red, int green, int blue,
 			float alpha) {
-		Gdx.gl.glClearColor(red / 255.0f, green / 255.0f, blue / 255.0f, alpha);
+		Gdx.gl.glClearColor((float) red / 255, (float) green / 255,
+				(float) blue / 255, alpha);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 	}
 
@@ -227,8 +183,7 @@ public class Game extends ApplicationAdapter {
 
 			obstacle.update();
 
-			if (Math.abs(obstacle.distanceTraveled.y) > screenDimension.y
-					+ 0.2f * Game.screenDimension.x)
+			if (-obstacle.positionRelativeToSpawn.y > Obstacle.lifeSpanDistance)
 				iterator.remove();
 		}
 	}

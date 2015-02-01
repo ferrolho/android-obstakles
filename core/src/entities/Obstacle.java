@@ -14,22 +14,23 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
-public class Obstacle extends Polygon {
+public final class Obstacle extends Polygon {
 
-	public final static float spawnHeight = Game.screenDimension.y + 0.1f
-			* Game.screenDimension.x;
+	public static final float minDistToCenter = 0.02f * Game.screenDimension.x;
+	public static final float maxDistToCenter = 0.1f * Game.screenDimension.x;
 
-	public final static float minDistToCenter = 0.02f * Game.screenDimension.x;
-	public final static float maxDistToCenter = 0.1f * Game.screenDimension.x;
+	public static final float spawnHeight = Game.screenDimension.y
+			+ maxDistToCenter;
+	public static final float lifeSpanDistance = spawnHeight + maxDistToCenter;
 
-	private final static float maxRotationSpeed = 5;
+	private static final float maxRotationSpeed = 5;
 
 	private PolygonSprite polygonSprite;
 	private TextureRegion textureRegion;
 	private short[] triangles;
 	private float[] outlineVertices;
 
-	public Vector2 centerSpawn, distanceTraveled, velocity;
+	public Vector2 centerSpawn, positionRelativeToSpawn, velocity;
 	public float rotation, rotationSpeed;
 	public Color color;
 
@@ -39,7 +40,7 @@ public class Obstacle extends Polygon {
 		rotation = 0;
 		rotationSpeed = MathUtils.random(-maxRotationSpeed, maxRotationSpeed);
 
-		distanceTraveled = new Vector2();
+		positionRelativeToSpawn = new Vector2();
 		velocity = new Vector2(0, -0.5f * Math.abs(rotationSpeed));
 
 		Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -102,12 +103,12 @@ public class Obstacle extends Polygon {
 	}
 
 	public void update() {
-		velocity.y -= 0.1 * Game.GRAVITY;
-		distanceTraveled.y += velocity.y;
+		velocity.y -= 0.1 * Game.gravity;
+		positionRelativeToSpawn.y += velocity.y;
 
 		rotation = (rotation + rotationSpeed) % 360;
 
-		setPosition(0, distanceTraveled.y);
+		setPosition(0, positionRelativeToSpawn.y);
 		setRotation(rotation);
 
 		updatePolyRegAndOutlineVertices();

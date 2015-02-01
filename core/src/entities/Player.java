@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class Player extends Rectangle {
+public final class Player extends Rectangle {
 
 	private static final long serialVersionUID = 1L;
 
@@ -67,7 +67,7 @@ public class Player extends Rectangle {
 		x += velocity.x;
 
 		// update y
-		velocity.y -= Game.GRAVITY;
+		velocity.y -= Game.gravity;
 		y += velocity.y;
 
 		updateCollisions();
@@ -83,7 +83,7 @@ public class Player extends Rectangle {
 		// side borders collision
 		if (x < 0) {
 			velocity.x = 2 * topSpeed;
-			velocity.y = 10 * Game.GRAVITY;
+			velocity.y = 10 * Game.gravity;
 
 			x += velocity.x;
 			y += velocity.y;
@@ -91,7 +91,7 @@ public class Player extends Rectangle {
 			Game.bumpSound.play();
 		} else if (x + width > Game.screenDimension.x) {
 			velocity.x = -2 * topSpeed;
-			velocity.y = 10 * Game.GRAVITY;
+			velocity.y = 10 * Game.gravity;
 
 			x += velocity.x;
 			y += velocity.y;

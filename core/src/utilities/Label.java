@@ -1,6 +1,6 @@
 package utilities;
 
-public class Label {
+public final class Label {
 
 	public String text;
 	public final int size;

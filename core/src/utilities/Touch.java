@@ -2,7 +2,7 @@ package utilities;
 
 import com.badlogic.gdx.math.Vector2;
 
-public class Touch {
+public final class Touch {
 
 	public Vector2 position;
 	public boolean touched;

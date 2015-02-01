@@ -30,6 +30,8 @@ public class GamePlayState extends State implements InputProcessor {
 
 	private boolean gameOver;
 
+	public static Player player;
+
 	@Override
 	public void create() {
 		timeAccumulator = 0;
@@ -39,7 +41,7 @@ public class GamePlayState extends State implements InputProcessor {
 		scoreFontSize = (int) (0.08 * Game.screenDimension.x);
 		elapsedTime = 0;
 
-		Game.player = new Player();
+		player = new Player();
 		Game.clearObstacles();
 
 		Gdx.input.setInputProcessor(this);
@@ -105,7 +107,7 @@ public class GamePlayState extends State implements InputProcessor {
 					break;
 				}
 
-				Game.player.update(movingLeft, movingRight);
+				player.update(movingLeft, movingRight);
 
 				Game.updateObstacles();
 
@@ -115,17 +117,17 @@ public class GamePlayState extends State implements InputProcessor {
 				// check player collision
 				for (Obstacle obstacle : Game.obstacles) {
 					// skip obstacles that are clearly not colliding
-					if (Obstacle.spawnHeight + obstacle.distanceTraveled.y
-							- Obstacle.maxDistToCenter > Game.player.y
-							+ Game.player.height)
+					if (Obstacle.spawnHeight + obstacle.positionRelativeToSpawn.y
+							- Obstacle.maxDistToCenter > player.y
+							+ player.height)
 						continue;
-					else if (obstacle.centerSpawn.x + Obstacle.maxDistToCenter < Game.player.x)
+					else if (obstacle.centerSpawn.x + Obstacle.maxDistToCenter < player.x)
 						continue;
-					else if (obstacle.centerSpawn.x - Obstacle.maxDistToCenter > Game.player.x
-							+ Game.player.width)
+					else if (obstacle.centerSpawn.x - Obstacle.maxDistToCenter > player.x
+							+ player.width)
 						continue;
 
-					if (Game.player.overlaps(obstacle)) {
+					if (player.overlaps(obstacle)) {
 						Game.thumpSound.play();
 
 						Game.lastScore = elapsedTime;
@@ -142,7 +144,7 @@ public class GamePlayState extends State implements InputProcessor {
 	public void render() {
 		Game.clearScreen(255, 255, 255, 1);
 
-		Game.player.draw();
+		player.draw();
 
 		Game.drawObstacles();
 
