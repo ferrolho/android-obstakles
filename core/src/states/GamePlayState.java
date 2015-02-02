@@ -43,7 +43,7 @@ public class GamePlayState extends State implements InputProcessor {
 
 		scoreFont = Game.fontManager.getFont((int) (0.08f * screenWidth));
 
-		final int scoreMargin = (int) (0.01f * screenWidth);
+		final int scoreMargin = (int) (0.02f * screenWidth);
 		scoreRightBorderX = screenWidth - scoreMargin;
 		scoreY = (int) (Game.screenDimension.y - scoreMargin);
 	}
