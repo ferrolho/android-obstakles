@@ -268,8 +268,8 @@ public class GameOverState extends State implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		touch.position.x = screenX;
-		touch.position.y = screenY;
+		touch.x = screenX;
+		touch.y = screenY;
 		touch.touched = true;
 
 		return true;
@@ -278,8 +278,7 @@ public class GameOverState extends State implements InputProcessor {
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		if (retryBtn.contains(screenX, Game.screenDimension.y - screenY)
-				&& retryBtn.contains(touch.position.x, Game.screenDimension.y
-						- touch.position.y)) {
+				&& retryBtn.contains(touch.x, Game.screenDimension.y - touch.y)) {
 			StateManager.changeState(new GamePlayState());
 			Game.clickSound.play();
 		}
@@ -287,21 +286,21 @@ public class GameOverState extends State implements InputProcessor {
 		if (Gdx.app.getType() != ApplicationType.Desktop) {
 			if (leaderboardBtn.contains(screenX, Game.screenDimension.y
 					- screenY)
-					&& leaderboardBtn.contains(touch.position.x,
-							Game.screenDimension.y - touch.position.y)) {
+					&& leaderboardBtn.contains(touch.x, Game.screenDimension.y
+							- touch.y)) {
 				Game.actionResolver.getLeaderboardGPGS();
 				Game.clickSound.play();
 			} else if (achievementsBtn.contains(screenX, Game.screenDimension.y
 					- screenY)
-					&& achievementsBtn.contains(touch.position.x,
-							Game.screenDimension.y - touch.position.y)) {
+					&& achievementsBtn.contains(touch.x, Game.screenDimension.y
+							- touch.y)) {
 				Game.actionResolver.getAchievementsGPGS();
 				Game.clickSound.play();
 			}
 		}
 
-		touch.position.x = 0;
-		touch.position.y = 0;
+		touch.x = 0;
+		touch.y = 0;
 		touch.touched = false;
 
 		return true;

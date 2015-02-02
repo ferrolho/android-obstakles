@@ -1,54 +1,79 @@
 package states;
 
-import entities.Obstacle;
-import entities.Player;
-import game.Game;
-
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import utilities.Touch;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
+import entities.Obstacle;
+import entities.Player;
+import game.Game;
+
 public class GamePlayState extends State implements InputProcessor {
+
+	private static final DecimalFormat decimalFormat = new DecimalFormat(
+			"##0.00");
 
 	public static Player player;
 
-	private float timeAccumulator;
-	private float obstacleSpawnProb;
+	private final int screenHalfWidth;
 
-	private int scoreFontSize;
-	private float elapsedTime;
+	private final BitmapFont scoreFont;
+	private final int scoreRightBorderX, scoreY;
+
+	private Touch touch;
+	private Array<Integer> keys;
+
+	private float timeAccumulator, elapsedTime;
+	private float obstacleSpawnProb;
 
 	private boolean gameOver;
 
+	public GamePlayState() {
+		final int screenWidth = (int) Game.screenDimension.x;
+
+		screenHalfWidth = screenWidth / 2;
+
+		scoreFont = Game.fontManager.getFont((int) (0.08f * screenWidth));
+
+		final int scoreMargin = (int) (0.01f * screenWidth);
+		scoreRightBorderX = screenWidth - scoreMargin;
+		scoreY = (int) (Game.screenDimension.y - scoreMargin);
+	}
+
 	@Override
 	public void create() {
-		timeAccumulator = 0;
-
-		obstacleSpawnProb = 1;
-
-		scoreFontSize = (int) (0.08 * Game.screenDimension.x);
-		elapsedTime = 0;
-
-		player = new Player();
-		Game.clearObstacles();
-
 		Gdx.input.setInputProcessor(this);
-		for (int i = 0; i < 5; i++) {
-			touches.put(i, new Touch());
+
+		switch (Gdx.app.getType()) {
+		case Android:
+			touch = new Touch();
+			break;
+
+		case Desktop:
+			keys = new Array<Integer>();
+			break;
+
+		default:
+			break;
 		}
 
+		player = new Player();
+
+		timeAccumulator = 0;
+		elapsedTime = 0;
+		obstacleSpawnProb = 1;
+
 		gameOver = false;
+
+		Game.clearObstacles();
 	}
 
 	@Override
@@ -57,11 +82,12 @@ public class GamePlayState extends State implements InputProcessor {
 
 	@Override
 	public void update() {
-		elapsedTime += Gdx.graphics.getDeltaTime();
+		final float deltaTime = Gdx.graphics.getDeltaTime();
 
-		timeAccumulator += Gdx.graphics.getDeltaTime();
+		timeAccumulator += deltaTime;
+		elapsedTime += deltaTime;
 
-		int elapsedFrames = MathUtils.floor(timeAccumulator / Game.SPF);
+		final int elapsedFrames = MathUtils.floor(timeAccumulator / Game.SPF);
 		timeAccumulator %= Game.SPF;
 
 		for (int i = 0; i < elapsedFrames; i++) {
@@ -74,19 +100,11 @@ public class GamePlayState extends State implements InputProcessor {
 
 				switch (Gdx.app.getType()) {
 				case Android:
-					Iterator<Entry<Integer, Touch>> it;
-
-					it = touches.entrySet().iterator();
-					while (it.hasNext()) {
-						Map.Entry<Integer, Touch> pairs = it.next();
-						Touch touch = pairs.getValue();
-
-						if (touch.touched) {
-							if (touch.position.x < Game.screenDimension.x / 2)
-								movingLeft = true;
-							else
-								movingRight = true;
-						}
+					if (touch.touched) {
+						if (touch.x < screenHalfWidth)
+							movingLeft = true;
+						else
+							movingRight = true;
 					}
 
 					break;
@@ -113,21 +131,23 @@ public class GamePlayState extends State implements InputProcessor {
 				if (MathUtils.random(100) <= obstacleSpawnProb)
 					Game.spawnObstacle();
 
+				final float heightFilter = player.y + player.height
+						+ Obstacle.maxDistToCenter;
+				final float leftFilter = player.x - Obstacle.maxDistToCenter;
+				final float rightFilter = player.x + player.width
+						+ Obstacle.maxDistToCenter;
+
 				// check player collision
 				for (Obstacle obstacle : Game.obstacles) {
 					// skip obstacles that are clearly not colliding
 					if (Obstacle.spawnHeight
-							+ obstacle.positionRelativeToSpawn.y
-							- Obstacle.maxDistToCenter > player.y
-							+ player.height)
+							+ obstacle.positionRelativeToSpawn.y > heightFilter)
 						continue;
-					else if (obstacle.centerSpawn.x + Obstacle.maxDistToCenter < player.x)
+					else if (obstacle.centerSpawn.x < leftFilter)
 						continue;
-					else if (obstacle.centerSpawn.x - Obstacle.maxDistToCenter > player.x
-							+ player.width)
+					else if (obstacle.centerSpawn.x > rightFilter)
 						continue;
-
-					if (player.overlaps(obstacle)) {
+					else if (player.overlaps(obstacle)) {
 						Game.thumpSound.play();
 
 						Game.lastScore = elapsedTime;
@@ -153,27 +173,21 @@ public class GamePlayState extends State implements InputProcessor {
 
 	@Override
 	public void dispose() {
+		touch = null;
+		keys = null;
 	}
 
 	private void renderScore() {
-		BitmapFont font = Game.fontManager.getFont(scoreFontSize);
+		String elapsedTimeStr = decimalFormat.format(elapsedTime);
 
-		DecimalFormat f = new DecimalFormat("##0.00");
-		String elapsedTimeStr = f.format(elapsedTime);
-
-		int x = (int) (Game.screenDimension.x - 1.1f * font
+		final int scoreX = (int) (scoreRightBorderX - scoreFont
 				.getBounds(elapsedTimeStr).width);
-		int y = (int) (Game.screenDimension.y - 0.3f * font
-				.getBounds(elapsedTimeStr).height);
 
 		Game.spriteBatch.begin();
-		font.setColor(0, 0, 0, 1);
-		font.draw(Game.spriteBatch, elapsedTimeStr, x, y);
+		scoreFont.setColor(Color.BLACK);
+		scoreFont.draw(Game.spriteBatch, elapsedTimeStr, scoreX, scoreY);
 		Game.spriteBatch.end();
 	}
-
-	private Map<Integer, Touch> touches = new HashMap<Integer, Touch>();
-	private Array<Integer> keys = new Array<Integer>();
 
 	@Override
 	public boolean keyDown(int keycode) {
@@ -186,14 +200,15 @@ public class GamePlayState extends State implements InputProcessor {
 		case Desktop:
 			if (keycode == Keys.ESCAPE)
 				StateManager.changeState(new MainMenuState());
+
+			if (!keys.contains(keycode, true))
+				keys.add(keycode);
+
 			break;
 
 		default:
 			break;
 		}
-
-		if (!keys.contains(keycode, true))
-			keys.add(keycode);
 
 		return false;
 	}
@@ -212,29 +227,27 @@ public class GamePlayState extends State implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		if (pointer < 5) {
-			touches.get(pointer).position.x = screenX;
-			touches.get(pointer).position.y = screenY;
-			touches.get(pointer).touched = true;
-		}
+		touch.x = screenX;
+		touch.y = screenY;
+		touch.touched = true;
 
 		return true;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (pointer < 5) {
-			touches.get(pointer).position.x = 0;
-			touches.get(pointer).position.y = 0;
-			touches.get(pointer).touched = false;
-		}
+		touch.touched = false;
 
 		return true;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		return false;
+		touch.x = screenX;
+		touch.y = screenY;
+		touch.touched = true;
+
+		return true;
 	}
 
 	@Override

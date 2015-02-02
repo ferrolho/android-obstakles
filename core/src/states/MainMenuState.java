@@ -227,8 +227,8 @@ public class MainMenuState extends State implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		touch.position.x = screenX;
-		touch.position.y = screenY;
+		touch.x = screenX;
+		touch.y = screenY;
 		touch.touched = true;
 
 		return true;
@@ -236,8 +236,8 @@ public class MainMenuState extends State implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (Math.abs(touch.position.x - screenX) < Game.touchTolerance
-				&& Math.abs(touch.position.y - screenY) < Game.touchTolerance) {
+		if (Math.abs(touch.x - screenX) < Game.touchTolerance
+				&& Math.abs(touch.y - screenY) < Game.touchTolerance) {
 			if (!transitioningToPlayState) {
 				animationPos.x = screenX;
 				animationPos.y = Game.screenDimension.y - screenY;
@@ -247,8 +247,8 @@ public class MainMenuState extends State implements InputProcessor {
 			}
 		}
 
-		touch.position.x = 0;
-		touch.position.y = 0;
+		touch.x = 0;
+		touch.y = 0;
 		touch.touched = false;
 
 		return true;
