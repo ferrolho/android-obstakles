@@ -7,10 +7,26 @@ Another android game.
 |-------|-------|
 |[![image](http://i.imgur.com/64IJLRD.png)](https://play.google.com/store/apps/details?id=com.ferrolho.obstakles)|Click [here](/desktop/binaries/obstakles.jar?raw=true) to download the jar.|
 
+#Screenshots
+![image](screenshots/current-version/main-menu.png)
+#####Fig. 1: Main menu
+***
+![image](screenshots/current-version/game-play.png)
+#####Fig. 2: Gameplay
+***
+![image](screenshots/current-version/game-over.png)
+#####Fig. 3: Game over
+***
+
 #Changelog
 ##To do
 - Add instructions;
 - Add animation on wall collisions.
+
+##v3.3
+- Added two new achievements;
+- Added vibration to wall collisions;
+- Optimized game play.
 
 ##v3.2
 - Redesigned app icon;
@@ -41,14 +57,3 @@ Another android game.
 
 ##v1.0
 - Added obstacles with different shapes.
-
-#Screenshots
-![image](screenshots/current-version/main-menu.png)
-#####Fig. 1: Main menu
-***
-![image](screenshots/current-version/game-play.png)
-#####Fig. 2: Gameplay
-***
-![image](screenshots/current-version/game-over.png)
-#####Fig. 3: Game over
-***
