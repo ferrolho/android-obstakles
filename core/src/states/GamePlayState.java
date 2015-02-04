@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import utilities.Touch;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -52,18 +53,10 @@ public class GamePlayState extends State implements InputProcessor {
 	public void create() {
 		Gdx.input.setInputProcessor(this);
 
-		switch (Gdx.app.getType()) {
-		case Android:
+		if (Gdx.app.getType() == ApplicationType.Android)
 			touch = new Touch();
-			break;
 
-		case Desktop:
-			keys = new Array<Integer>();
-			break;
-
-		default:
-			break;
-		}
+		keys = new Array<Integer>();
 
 		player = new Player();
 
