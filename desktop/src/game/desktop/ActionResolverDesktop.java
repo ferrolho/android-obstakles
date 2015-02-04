@@ -17,8 +17,11 @@ public class ActionResolverDesktop implements ActionResolver {
 	}
 
 	@Override
-	public void submitScoreGPGS(float score) {
-		System.out.println("submitScoreGPGS " + score);
+	public void submitScoreGPGS(float lastScore, int lastWallCollisions,
+			int totalWallCollisions) {
+		System.out.println("submitScoreGPGS " + lastScore);
+		System.out.println("submitScoreGPGS " + lastWallCollisions);
+		System.out.println("submitScoreGPGS " + totalWallCollisions);
 	}
 
 	@Override

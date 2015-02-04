@@ -63,6 +63,7 @@ public class GamePlayState extends State implements InputProcessor {
 		timeAccumulator = 0;
 		elapsedTime = 0;
 		obstacleSpawnProb = 1;
+		Game.lastWallCollisions = 0;
 
 		gameOver = false;
 

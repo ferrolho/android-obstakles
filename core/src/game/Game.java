@@ -28,6 +28,7 @@ public class Game extends ApplicationAdapter {
 	private static final String PREFERENCES_ID = "scores";
 	private static final String BEST_ID = "best";
 	private static final String BEST_SUBMITTED_ID = "best-submitted";
+	private static final String TOTAL_WALL_COLLISIONS_ID = "total-wall-collisions";
 
 	public static final int FPS = 60;
 	public static final float SPF = 1.0f / FPS;
@@ -49,6 +50,7 @@ public class Game extends ApplicationAdapter {
 	public static List<Obstacle> obstacles, spareObstacles;
 
 	public static float lastScore, bestScore, bestScoreSubmitted;
+	public static int lastWallCollisions, totalWallCollisions;
 
 	public Game(ActionResolver actionResolver) {
 		Game.actionResolver = actionResolver;
@@ -129,30 +131,37 @@ public class Game extends ApplicationAdapter {
 		Preferences prefs = Gdx.app.getPreferences(PREFERENCES_ID);
 		bestScore = prefs.getFloat(BEST_ID, 0);
 		bestScoreSubmitted = prefs.getFloat(BEST_SUBMITTED_ID, 0);
+		totalWallCollisions = prefs.getInteger(TOTAL_WALL_COLLISIONS_ID, 0);
 
 		// update local best score
 		if (lastScore > bestScore) {
 			bestScore = lastScore;
 
 			prefs.putFloat(BEST_ID, bestScore);
-			prefs.flush();
 		}
+
+		// update local number of collisions with the walls
+		totalWallCollisions += lastWallCollisions;
+		prefs.putInteger(TOTAL_WALL_COLLISIONS_ID, totalWallCollisions);
 
 		// if signed in game services
 		if (actionResolver.getSignedInGPGS()) {
 			// submit last score
-			actionResolver.submitScoreGPGS(lastScore);
+			actionResolver.submitScoreGPGS(lastScore, lastWallCollisions,
+					totalWallCollisions);
 
 			// if local best is better than online best
 			if (bestScore > bestScoreSubmitted) {
 				// submit local best score
-				actionResolver.submitScoreGPGS(bestScore);
+				actionResolver.submitScoreGPGS(bestScore, lastWallCollisions,
+						totalWallCollisions);
 
 				bestScoreSubmitted = bestScore;
 				prefs.putFloat(BEST_SUBMITTED_ID, bestScoreSubmitted);
-				prefs.flush();
 			}
 		}
+
+		prefs.flush();
 	}
 
 	private void updateScreenDimension() {

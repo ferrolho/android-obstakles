@@ -8,6 +8,8 @@
     <string name="achievement_expert" tools:ignore="TypographyDashes">CgkIjMj7-8wXEAIQAw</string>
     <string name="achievement_master" tools:ignore="TypographyDashes">CgkIjMj7-8wXEAIQBA</string>
     <string name="achievement_legend" tools:ignore="TypographyDashes">CgkIjMj7-8wXEAIQBQ</string>
+    <string name="achievement_wall_rusher" tools:ignore="TypographyDashes">CgkIjMj7-8wXEAIQBw</string>
+    <string name="achievement_crazy_crasher" tools:ignore="TypographyDashes">CgkIjMj7-8wXEAIQCA</string>
     <string name="leaderboard_top_survivors" tools:ignore="TypographyDashes">CgkIjMj7-8wXEAIQBg</string>
 
 </resources>

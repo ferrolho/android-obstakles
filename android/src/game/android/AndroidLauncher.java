@@ -71,22 +71,28 @@ public class AndroidLauncher extends AndroidApplication implements
 	}
 
 	@Override
-	public void submitScoreGPGS(float score) {
-		long scoreMillis = (long) (score * 1000);
+	public void submitScoreGPGS(float lastScore, int lastWallCollisions,
+			int totalWallCollisions) {
+		long scoreMillis = (long) (lastScore * 1000);
 
 		Games.Leaderboards.submitScore(gameHelper.getApiClient(),
 				getString(R.string.leaderboard_top_survivors), scoreMillis);
 
-		if (score >= 10)
+		if (lastScore >= 10)
 			unlockAchievementGPGS(getString(R.string.achievement_rookie));
-		if (score >= 20)
+		if (lastScore >= 20)
 			unlockAchievementGPGS(getString(R.string.achievement_apprentice));
-		if (score >= 30)
+		if (lastScore >= 30)
 			unlockAchievementGPGS(getString(R.string.achievement_expert));
-		if (score >= 40)
+		if (lastScore >= 40)
 			unlockAchievementGPGS(getString(R.string.achievement_master));
-		if (score >= 50)
+		if (lastScore >= 50)
 			unlockAchievementGPGS(getString(R.string.achievement_legend));
+
+		if (lastWallCollisions >= 20)
+			unlockAchievementGPGS(getString(R.string.achievement_wall_rusher));
+		if (totalWallCollisions >= 1000)
+			unlockAchievementGPGS(getString(R.string.achievement_crazy_crasher));
 	}
 
 	@Override

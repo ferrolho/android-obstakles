@@ -6,7 +6,8 @@ public interface ActionResolver {
 
 	public void loginGPGS();
 
-	public void submitScoreGPGS(float lastScore);
+	public void submitScoreGPGS(float lastScore, int lastWallCollisions,
+			int totalWallCollisions);
 
 	public void unlockAchievementGPGS(String achievementId);
 

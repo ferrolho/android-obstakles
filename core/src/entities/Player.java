@@ -91,6 +91,7 @@ public final class Player extends Rectangle {
 
 			Game.bumpSound.play();
 			Gdx.input.vibrate(100);
+			Game.lastWallCollisions++;
 		} else if (x + width > Game.screenDimension.x) {
 			velocity.x = -2 * topSpeed;
 			velocity.y = 10 * Game.gravity;
@@ -100,6 +101,7 @@ public final class Player extends Rectangle {
 
 			Game.bumpSound.play();
 			Gdx.input.vibrate(100);
+			Game.lastWallCollisions++;
 		}
 	}
 
