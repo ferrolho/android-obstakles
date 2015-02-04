@@ -2,6 +2,7 @@ package entities;
 
 import game.Game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
@@ -89,6 +90,7 @@ public final class Player extends Rectangle {
 			y += velocity.y;
 
 			Game.bumpSound.play();
+			Gdx.input.vibrate(100);
 		} else if (x + width > Game.screenDimension.x) {
 			velocity.x = -2 * topSpeed;
 			velocity.y = 10 * Game.gravity;
@@ -97,6 +99,7 @@ public final class Player extends Rectangle {
 			y += velocity.y;
 
 			Game.bumpSound.play();
+			Gdx.input.vibrate(100);
 		}
 	}
 
